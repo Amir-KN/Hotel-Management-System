@@ -16,9 +16,7 @@
     "312": "Information was changed successfully.",
     "401": "Invalid value!",
     "403": "Access denied!",
-
     "404" : "Failed to Connecting Server!",
-
     "412": "Invalid capacity value!",
     "413": "successfully Leaving.",
     "430": "Invalid username or password.",
