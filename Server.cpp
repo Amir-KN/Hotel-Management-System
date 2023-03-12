@@ -1,252 +1,206 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <string.h>
-#include <arpa/inet.h>
-#include <sys/time.h>
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <sstream>
-#include <vector>
-#include "includes/json.hpp"
-#include "CalssTest.cpp"
-#include "Date.cpp"
+#include "includes/Server.hpp"
 
-using namespace std;
-using json = nlohmann::json;
-
-#define MAX_LEN_MESS 512
-
-// bool IsDigit(string str){
-//     for(int i = 0 ; i < str.length() ; i++){
-//         if (! isdigit(str[i]))  
-//             return false;
-//     }
-//     return true;
-// }
-
-// vector<string> BreakString(string str)
-// {
-//     stringstream ss(str);
-//     string word;
-//     vector<string> words;
-
-//     while (ss >> word)
-//         words.push_back(word);
-//     return words;
-// }
-
-class Server
+Server::Server()
 {
-public:
-   Server(){
-        ifstream C("includes/config.json"), E("includes/Errors.json");
-        json Config;
+    ifstream C("JsonFiles/config.json"), E("JsonFiles/Errors.json");
+    json Config;
 
-        Config = json::parse(C);
-        Errors = json::parse(E);
+    Config = json::parse(C);
+    Errors = json::parse(E);
 
-        port = Config["commandChannelPort"].get<int>();
+    port = Config["commandChannelPort"].get<int>();
 
-        is_con = true;
-    }
+    is_con = true;
+}
 
-    void Run()
+void Server::Run()
+{
+    SetupServer();
+    char buffer[1024] = {0};
+
+    FD_ZERO(&master_set);
+    max_sd = server_fd;
+    FD_SET(server_fd, &master_set);
+    FD_SET(fileno(stdin), &master_set);
+
+    cout << "*** Welcome to Hotel Management System ***\nWrite Command:\n   --> settime: <setTime> <Date>\n   --> Close server: Exit" << endl;
+
+    while (is_con)
     {
-        SetupServer();
-        char buffer[1024] = {0};
+        working_set = master_set;
+        select(max_sd + 1, &working_set, NULL, NULL, NULL);
 
-        FD_ZERO(&master_set);
-        max_sd = server_fd;
-        FD_SET(server_fd, &master_set);
-        FD_SET(fileno(stdin), &master_set);
-
-        cout << "*** Welcome to Hotel Management System ***\nWrite Command:\n   --> settime: <setTime> <Date>\n   --> Close server: Exit" << endl;
-
-        while (is_con)
+        for (int i = 0; i <= max_sd; i++)
         {
-            working_set = master_set;
-            select(max_sd + 1, &working_set, NULL, NULL, NULL);
-
-            for (int i = 0; i <= max_sd; i++)
+            if (FD_ISSET(i, &working_set))
             {
-                if (FD_ISSET(i, &working_set))
-                {
-                    if (i == 0)
-                    { // get input from user with command
-                        is_con = GetFromBuffer();
-                    }
+                if (i == 0)
+                { // get input from user with command
+                    is_con = GetFromBuffer();
+                }
 
-                    else if (i == server_fd)
-                    { // new clinet
-                        new_socket = AcceptClient(server_fd);
-                        FD_SET(new_socket, &master_set);
-                        if (new_socket > max_sd)
-                            max_sd = new_socket;
-                        cout << "New Client Connected. fd = " << new_socket << endl;
-                    }
+                else if (i == server_fd)
+                { // new clinet
+                    new_socket = AcceptClient(server_fd);
+                    FD_SET(new_socket, &master_set);
+                    if (new_socket > max_sd)
+                        max_sd = new_socket;
+                    cout << "New Client Connected. fd = " << new_socket << endl;
+                }
 
-                    else
-                    { // recv message from client
-                        GiveMessFromClient(i);
-                    }
+                else
+                { // recv message from client
+                    GiveMessFromClient(i);
                 }
             }
         }
-    
     }
+}
 
-private:
-    int server_fd, new_socket, max_sd, port;
-    char buffer[MAX_LEN_MESS] = {0};
-    fd_set master_set, working_set;
-    json Errors;
-    Date date;
-    JsonHandler Data ;
-    bool is_con;
-    
-    void SetupServer()
+void Server::SetupServer()
+{
+    struct sockaddr_in address;
+    server_fd = socket(AF_INET, SOCK_STREAM, 0);
+
+    int opt = 1;
+    setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+
+    address.sin_family = AF_INET;
+    address.sin_addr.s_addr = INADDR_ANY;
+    address.sin_port = htons(port);
+
+    bind(server_fd, (struct sockaddr *)&address, sizeof(address));
+
+    listen(server_fd, 4);
+}
+
+int Server::AcceptClient(int server_fd)
+{
+    int client_fd;
+    struct sockaddr_in client_address;
+    int address_len = sizeof(client_address);
+    client_fd = accept(server_fd, (struct sockaddr *)&client_address, (socklen_t *)&address_len);
+    return client_fd;
+}
+
+bool Server::GetFromBuffer()
+{
+    memset(buffer, 0, MAX_LEN_MESS);
+    read(0, buffer, MAX_LEN_MESS);
+    vector<string> command = BreakString(string(buffer));
+    if (command.size() == 1)
+        command[0].pop_back();
+
+    if (command[0] == "setTime")
     {
-        struct sockaddr_in address;
-        server_fd = socket(AF_INET, SOCK_STREAM, 0);
-
-        int opt = 1;
-        setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
-
-        address.sin_family = AF_INET;
-        address.sin_addr.s_addr = INADDR_ANY;
-        address.sin_port = htons(port);
-
-        bind(server_fd, (struct sockaddr *)&address, sizeof(address));
-
-        listen(server_fd, 4);
-    }
-
-    int AcceptClient(int server_fd)
-    {
-        int client_fd;
-        struct sockaddr_in client_address;
-        int address_len = sizeof(client_address);
-        client_fd = accept(server_fd, (struct sockaddr *)&client_address, (socklen_t *)&address_len);
-        return client_fd;
-    }
-
-    bool GetFromBuffer()
-    {   
-        memset(buffer, 0, MAX_LEN_MESS);
-        read(0, buffer, MAX_LEN_MESS);
-        vector<string> command = BreakString(string(buffer)); if (command.size() == 1) command[0].pop_back();
-
-        if (command[0] == "setTime")
+        command[1].pop_back();
+        if (CheckDate(command[1]))
         {
-            command[1].pop_back();
-            if (CheckDate(command[1]))
-            {
-                date.SetTime(command[1]);
-            }
-            return true;
+            date.SetTime(command[1]);
         }
-        else if (command[0] == "exit"){
-            return false;
-        }
-        else{
-            cout << "Bad Command" << endl ;
-            return true;
-        }
-
-    }
-
-    void GiveMessFromClient(int client_fd)
-    {
-        int bytes_received;
-        memset(buffer, 0, MAX_LEN_MESS);
-        bytes_received = recv(client_fd, buffer, 1024, 0);
-
-        if (bytes_received == 0)
-        { // EOF
-            printf("client fd = %d closed\n", client_fd);
-            close(client_fd);
-            FD_CLR(client_fd, &master_set);
-            return;
-        }
-
-        printf("client %d: %s\n", client_fd, buffer);
-        CommandHandler(string(buffer), client_fd);
-    }
-
-    bool CheckUserInfo(vector<string> user_info){
-        if (user_info.size() != 4)
-            return false;
-        if ( (!IsDigit(user_info[1])) || (!IsDigit(user_info[2])) )
-            return false;
-        
         return true;
     }
-
-    string SignupUser(int client_fd, string username, string in_user_info){
-        vector<string> user_info = BreakString(in_user_info);
-        if (CheckUserInfo(user_info)) // input is correct
-        {
-            int new_id = Data.GetNewId();
-            cout << user_info.size() << endl ;
-            NormalUser* new_user = new NormalUser(new_id, username, user_info[0], user_info[1], user_info[2], user_info[3]);
-            Data.AddNewUser(new_user);
-            return "231" ;
-        }
-
-        return "503" ;
-    }
-
-    string Recv(int client_fd)
+    else if (command[0] == "exit")
     {
-        memset(buffer, 0, MAX_LEN_MESS);
-        recv(client_fd, buffer, MAX_LEN_MESS, 0);
-        return string(buffer);
+        return false;
     }
-
-    void Send(int client_fd, string mess){
-        send(client_fd, mess.c_str(), mess.length(), 0);   
-    }
-
-    void CommandHandler(string command_line, int client_fd)
+    else
     {
-        vector<string> command = BreakString(command_line);
+        cout << "Bad Command" << endl;
+        return true;
+    }
+}
 
-        if (command[0] == "signup")
-        {
-            if (Data.IsUserExist(command[1]))
-                Send(client_fd, "SIGNUP_NOT_OK");
-            else{
-                Send(client_fd, "SIGNUP_OK");
-                string UserInfo = Recv(client_fd) ;
-                string error_num = SignupUser(client_fd, command[1], UserInfo);
-                Send(client_fd, error_num);
-            }
-        }
+void Server::GiveMessFromClient(int client_fd)
+{
+    int bytes_received;
+    memset(buffer, 0, MAX_LEN_MESS);
+    bytes_received = recv(client_fd, buffer, 1024, 0);
 
-        else if (command[0] == "signin")
-        {
-            if (Data.IsUserExist(command[1]))
-            {
-                if (Data.FindUserByName(command[1])->IsPassCorrect(command[2]))
-                    Send(client_fd, "SIGNIN_OK");
-            }
-            else{
-                Send(client_fd, "SIGNIN_NOT_OK");
-            }
-        }
+    if (bytes_received == 0)
+    { // EOF
+        printf("client fd = %d closed\n", client_fd);
+        close(client_fd);
+        FD_CLR(client_fd, &master_set);
+        return;
+    }
 
-        else if (command[0] == "exit")
+    printf("client %d: %s\n", client_fd, buffer);
+    CommandHandler(string(buffer), client_fd);
+}
+
+bool Server::CheckUserInfo(vector<string> user_info)
+{
+    if (user_info.size() != 4)
+        return false;
+    if ((!IsDigit(user_info[1])) || (!IsDigit(user_info[2])))
+        return false;
+
+    return true;
+}
+
+string Server::SignupUser(int client_fd, string username, string in_user_info)
+{
+    vector<string> user_info = BreakString(in_user_info);
+    if (CheckUserInfo(user_info)) // input is correct
+    {
+        int new_id = Data.GetNewId();
+        cout << user_info.size() << endl;
+        NormalUser *new_user = new NormalUser(new_id, username, user_info[0], user_info[1], user_info[2], user_info[3]);
+        Data.AddNewUser(new_user);
+        return "231";
+    }
+
+    return "503";
+}
+
+string Server::Recv(int client_fd)
+{
+    memset(buffer, 0, MAX_LEN_MESS);
+    recv(client_fd, buffer, MAX_LEN_MESS, 0);
+    return string(buffer);
+}
+
+void Server::Send(int client_fd, string mess)
+{
+    send(client_fd, mess.c_str(), mess.length(), 0);
+}
+
+void Server::CommandHandler(string command_line, int client_fd)
+{
+    vector<string> command = BreakString(command_line);
+
+    if (command[0] == "signup")
+    {
+        if (Data.IsUserExist(command[1]))
+            Send(client_fd, "SIGNUP_NOT_OK");
+        else
         {
-            Send(client_fd, "EXIT_OK");
+            Send(client_fd, "SIGNUP_OK");
+            string UserInfo = Recv(client_fd);
+            string error_num = SignupUser(client_fd, command[1], UserInfo);
+            Send(client_fd, error_num);
         }
     }
-};
 
+    else if (command[0] == "signin")
+    {
+        if (Data.IsUserExist(command[1]))
+        {
+            if (Data.FindUserByName(command[1])->IsPassCorrect(command[2]))
+                Send(client_fd, "SIGNIN_OK");
+        }
+        else
+        {
+            Send(client_fd, "SIGNIN_NOT_OK");
+        }
+    }
+
+    else if (command[0] == "exit")
+    {
+        Send(client_fd, "EXIT_OK");
+    }
+}
 
 int main(int argc, char const *argv[])
 {
