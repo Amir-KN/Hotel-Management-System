@@ -47,6 +47,7 @@ class Date{
         void PrintDay(){
             cout << day << " - " << month << " - " << year << endl;
         }
+    
     private:
         int day;
         int month;

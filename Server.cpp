@@ -13,12 +13,20 @@
 #include <sstream>
 #include <vector>
 #include "includes/json.hpp"
+#include "CalssTest.cpp"
 
 using namespace std;
 using json = nlohmann::json;
 
 #define MAX_LEN_MESS 512
 
+bool IsDigit(string str){
+    for(int i = 0 ; i < str.length() ; i++){
+        if (! isdigit(str[i]))  
+            return false;
+    }
+    return true;
+}
 
 vector<string> BreakString(string str)
 {
@@ -42,6 +50,7 @@ public:
         Errors = json::parse(E);
 
         port = Config["commandChannelPort"].get<int>();
+
     }
 
     void Run()
@@ -93,7 +102,8 @@ private:
     char buffer[MAX_LEN_MESS] = {0};
     fd_set master_set, working_set;
     json Errors;
-
+    JsonHandler Data ;
+    
     void SetupServer()
     {
         struct sockaddr_in address;
@@ -119,7 +129,6 @@ private:
         client_fd = accept(server_fd, (struct sockaddr *)&client_address, (socklen_t *)&address_len);
         return client_fd;
     }
-
 
     void GetFromBuffer()
     {
@@ -147,11 +156,38 @@ private:
         CommandHandler(string(buffer), client_fd);
     }
 
+    bool CheckUserInfo(vector<string> user_info){
+        if (user_info.size() != 4)
+            return false;
+        if ( (!IsDigit(user_info[1])) || (!IsDigit(user_info[2])) )
+            return false;
+        
+        return true;
+    }
+
+    string SignupUser(int client_fd, string username, string in_user_info){
+        vector<string> user_info = BreakString(in_user_info);
+        if (CheckUserInfo(user_info)) // input is correct
+        {
+            int new_id = Data.GetNewId();
+            cout << user_info.size() << endl ;
+            NormalUser* new_user = new NormalUser(new_id, username, user_info[0], user_info[1], user_info[2], user_info[3]);
+            Data.AddNewUser(new_user);
+            return "231" ;
+        }
+
+        return "503" ;
+    }
+
     string Recv(int client_fd)
     {
         memset(buffer, 0, MAX_LEN_MESS);
         recv(client_fd, buffer, MAX_LEN_MESS, 0);
         return string(buffer);
+    }
+
+    void Send(int client_fd, string mess){
+        send(client_fd, mess.c_str(), mess.length(), 0);   
     }
 
     void CommandHandler(string command_line, int client_fd)
@@ -160,46 +196,31 @@ private:
 
         if (command[0] == "signup")
         {
-            /*
-            if (username exist)
-                send("SIGNUP_NOT_OK")
-
-            if (username not exist) {
-                send("SIGNUP_OK");
-                recv()
-                bool is_info_ok = check_recv()
-                if (recv is ok)
-                    send("231")
-                else
-                    send("503")
-
-
-                save info of new use in json;
+            if (Data.IsUserExist(command[1]))
+                Send(client_fd, "SIGNUP_NOT_OK");
+            else{
+                Send(client_fd, "SIGNUP_OK");
+                string UserInfo = Recv(client_fd) ;
+                string error_num = SignupUser(client_fd, command[1], UserInfo);
+                Send(client_fd, error_num);
             }
-
-            */
-            // delete 3 line below
-            send(client_fd, "SIGNUP_OK", 10, 0);
-            Recv(client_fd);
-            send(client_fd, "231", 10, 0);
         }
 
         else if (command[0] == "signin")
         {
-            /*
-            if (ok) :
-                send("SIGNIN_OK")
-
-            send(client_fd, "--> signin command is recved from client <--", 45, 0);
-            */
-
-            // delete line below
-            send(client_fd, "SIGNIN_OK", 10, 0);
+            if (Data.IsUserExist(command[1]))
+            {
+                if (Data.FindUserByName(command[1])->IsPassCorrect(command[2]))
+                    Send(client_fd, "SIGNIN_OK");
+            }
+            else{
+                Send(client_fd, "SIGNIN_NOT_OK");
+            }
         }
 
         else if (command[0] == "exit")
         {
-            send(client_fd, "EXIT_OK", 8, 0);
+            Send(client_fd, "EXIT_OK");
         }
     }
 };

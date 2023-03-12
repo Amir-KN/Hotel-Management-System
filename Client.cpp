@@ -95,6 +95,7 @@ private:
             cin >> word;
             command += word + " ";
         }
+        cout << "*** " << command << " ***" << endl;;
         return command;
     }
 
@@ -106,9 +107,9 @@ private:
         {
             PrintError("311");
             string user_info = GetUserInfo();
-            send(server_fd, user_info.c_str(), sizeof(user_info.c_str()), 0);
+            send(server_fd, user_info.c_str(), user_info.length(), 0);
             error_number = Recv(server_fd);
-            PrintError(string(error_number));
+            PrintError(error_number);
         }
         else if (recv_mess_from_ser == "SIGNUP_NOT_OK")
         {
@@ -120,7 +121,7 @@ private:
             PrintError("230");
             Menu();
         }
-        else if (recv_mess_from_ser == "SIGNIN_NOt_OK")
+        else if (recv_mess_from_ser == "SIGNIN_NOT_OK")
             PrintError("430");
 
         else if (recv_mess_from_ser == "EXIT_OK")
@@ -164,6 +165,7 @@ private:
 
     void Menu()
     {
+        cout << "IN MENU" << endl;
     }
 };
 

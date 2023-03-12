@@ -51,6 +51,11 @@ class User{
         }
         virtual bool is_admin() = 0 ;
         virtual void print_user() = 0;
+        string get_user(){return user;}
+        bool IsPassCorrect(string in_pass){
+            return in_pass == password ;
+        }
+        int GetId(){return id;}
     protected:
         int id;
         string user;
@@ -212,6 +217,31 @@ class JsonHandler{
         vector<User*> get_users(){return all_user;}
         vector<Room*> get_rooms(){return all_room;}
 
+        User* FindUserByName(string in_user){
+            for (User* user : all_user) {
+                if (user->get_user() == in_user)
+                    return user;
+            }
+            return NULL;
+        }
+
+        bool IsUserExist(string target_user){
+            for(auto user : all_user){
+                if (user->get_user() == target_user)
+                    return true;                
+            }
+            return false;
+        }
+
+        int GetNewId(){
+            int last_index = all_user.size() - 1;
+            return all_user[last_index]->GetId() + 1 ;
+        }
+
+        void AddNewUser(NormalUser* new_user){ 
+            all_user.push_back(new_user) ;
+         }
+         
     private:
         json room_data;
         json user_data;
@@ -220,11 +250,13 @@ class JsonHandler{
 
 };
 
-int main(){
-        JsonHandler j;
-        (j.get_rooms())[1]->get_users()[0]->PrintResInfo();
+// int main(){
+//         JsonHandler j;
+//         // (j.get_rooms())[1]->get_users()[0]->PrintResInfo();
+//         cout << j.IsUserExist("Moradd") << endl;
 
 
 
-        return 0 ;
-}
+
+//         return 0 ;
+// }
