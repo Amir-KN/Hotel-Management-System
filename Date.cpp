@@ -30,12 +30,17 @@ return ( (year % 400 == 0) || ((year % 4 == 0) && (year % 100 != 0)) );
 
 class Date{
     public:
-        Date(string date_str)
+        Date(string date_str = "1-1-2023")
         {
-        vector<string> date = BreakString(date_str, '-');
-        year = stoi(date[2]);
-        month = stoi(date[1]);
-        day = stoi(date[0]);
+            SetTime(date_str);
+        }
+
+        void SetTime(string date_str)
+        {
+            vector<string> date = BreakString(date_str, '-');
+            year = stoi(date[2]);
+            month = stoi(date[1]);
+            day = stoi(date[0]);
         }
 
         void PassDay(int num_day){
@@ -85,7 +90,7 @@ class Date{
 
 bool IsDigit(string str){
     for(int i = 0 ; i < str.length() ; i++){
-        if (! isdigit(str[i]))  
+        if ( (str[i] != '0') && (!isdigit(str[i])) )
             return false;
     }
     return true;
@@ -131,15 +136,15 @@ bool CheckDate(string date_str){
 
 
 
-int main(){
-    while(true){
-        string date;
-        cin >> date ;
-        cout << CheckDate(date) << endl ;
-        Date d1(date);
-        d1.PrintDay();
-        d1.PassDay(3);
-        d1.PrintDay();
-    }
- ;
-}   
+// int main(){
+//     while(true){
+//         string date;
+//         cin >> date ;
+//         cout << CheckDate(date) << endl ;
+//         Date d1(date);
+//         d1.PrintDay();
+//         d1.PassDay(3);
+//         d1.PrintDay();
+//     }
+ 
+// }   

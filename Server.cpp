@@ -14,30 +14,31 @@
 #include <vector>
 #include "includes/json.hpp"
 #include "CalssTest.cpp"
+#include "Date.cpp"
 
 using namespace std;
 using json = nlohmann::json;
 
 #define MAX_LEN_MESS 512
 
-bool IsDigit(string str){
-    for(int i = 0 ; i < str.length() ; i++){
-        if (! isdigit(str[i]))  
-            return false;
-    }
-    return true;
-}
+// bool IsDigit(string str){
+//     for(int i = 0 ; i < str.length() ; i++){
+//         if (! isdigit(str[i]))  
+//             return false;
+//     }
+//     return true;
+// }
 
-vector<string> BreakString(string str)
-{
-    stringstream ss(str);
-    string word;
-    vector<string> words;
+// vector<string> BreakString(string str)
+// {
+//     stringstream ss(str);
+//     string word;
+//     vector<string> words;
 
-    while (ss >> word)
-        words.push_back(word);
-    return words;
-}
+//     while (ss >> word)
+//         words.push_back(word);
+//     return words;
+// }
 
 class Server
 {
@@ -51,6 +52,7 @@ public:
 
         port = Config["commandChannelPort"].get<int>();
 
+        is_con = true;
     }
 
     void Run()
@@ -63,9 +65,9 @@ public:
         FD_SET(server_fd, &master_set);
         FD_SET(fileno(stdin), &master_set);
 
-        write(1, "*** Welcome to Hotel Management System ***\nPlese set time\n", 59);
+        cout << "*** Welcome to Hotel Management System ***\nWrite Command:\n   --> settime: <setTime> <Date>\n   --> Close server: Exit" << endl;
 
-        while (true)
+        while (is_con)
         {
             working_set = master_set;
             select(max_sd + 1, &working_set, NULL, NULL, NULL);
@@ -76,7 +78,7 @@ public:
                 {
                     if (i == 0)
                     { // get input from user with command
-                        GetFromBuffer();
+                        is_con = GetFromBuffer();
                     }
 
                     else if (i == server_fd)
@@ -95,6 +97,7 @@ public:
                 }
             }
         }
+    
     }
 
 private:
@@ -102,7 +105,9 @@ private:
     char buffer[MAX_LEN_MESS] = {0};
     fd_set master_set, working_set;
     json Errors;
+    Date date;
     JsonHandler Data ;
+    bool is_con;
     
     void SetupServer()
     {
@@ -130,12 +135,29 @@ private:
         return client_fd;
     }
 
-    void GetFromBuffer()
-    {
-        
+    bool GetFromBuffer()
+    {   
         memset(buffer, 0, MAX_LEN_MESS);
         read(0, buffer, MAX_LEN_MESS);
-        // handle set time
+        vector<string> command = BreakString(string(buffer)); if (command.size() == 1) command[0].pop_back();
+
+        if (command[0] == "setTime")
+        {
+            command[1].pop_back();
+            if (CheckDate(command[1]))
+            {
+                date.SetTime(command[1]);
+            }
+            return true;
+        }
+        else if (command[0] == "exit"){
+            return false;
+        }
+        else{
+            cout << "Bad Command" << endl ;
+            return true;
+        }
+
     }
 
     void GiveMessFromClient(int client_fd)
