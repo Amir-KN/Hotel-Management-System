@@ -23,9 +23,9 @@ public:
     User(int _id, string _user, string _pass);
     virtual bool is_admin() = 0;
     virtual void print_user() = 0;
-    string get_user() { return user; }
+    string get_user();
     bool IsPassCorrect(string in_pass);
-    int GetId() { return id; }
+    int GetId() ;
 
 protected:
     int id;
@@ -50,7 +50,7 @@ public:
 
     void print_user();
 
-    bool is_admin() { return false; }
+    bool is_admin() ;
 
 private:
     string purse;
@@ -65,8 +65,7 @@ public:
 
     void print_room();
 
-    vector<ResUserInfo *> get_users() { return users; }
-
+    vector<ResUserInfo *> get_users() ;
 private:
     string number;
     int status;

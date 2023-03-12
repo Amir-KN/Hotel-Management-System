@@ -1,5 +1,6 @@
 #ifndef _Server_
 #define _Server_
+
 #include "Inclue.hpp"
 
 #include "Function.hpp"
@@ -37,7 +38,10 @@ private:
     string Recv(int client_fd);
 
     void Send(int client_fd, string mess);
+    
     void CommandHandler(string command_line, int client_fd);
+
+    void PrintError(string error_number) ;
 };
 
 #endif

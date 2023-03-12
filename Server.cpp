@@ -23,11 +23,12 @@ void Server::Run()
     FD_SET(server_fd, &master_set);
     FD_SET(fileno(stdin), &master_set);
 
-    cout << "*** Welcome to Hotel Management System ***\nWrite Command:\n   --> settime: <setTime> <Date>\n   --> Close server: Exit" << endl;
+    cout << "*** Welcome to Hotel Management System ***" << endl;
 
     while (is_con)
     {
         working_set = master_set;
+        cout << "> Write Command:\n   --> settime: <setTime> <Date>\n   --> Close server: Exit" << endl;
         select(max_sd + 1, &working_set, NULL, NULL, NULL);
 
         for (int i = 0; i <= max_sd; i++)
@@ -97,7 +98,10 @@ bool Server::GetFromBuffer()
         if (CheckDate(command[1]))
         {
             date.SetTime(command[1]);
+            PrintError("600");
         }
+        else
+            PrintError("401");
         return true;
     }
     else if (command[0] == "exit")
@@ -106,7 +110,7 @@ bool Server::GetFromBuffer()
     }
     else
     {
-        cout << "Bad Command" << endl;
+        PrintError("503");
         return true;
     }
 }
@@ -201,6 +205,13 @@ void Server::CommandHandler(string command_line, int client_fd)
         Send(client_fd, "EXIT_OK");
     }
 }
+
+void Server::PrintError(string error_number)
+{
+    string fail = "Failed to read Error number " + error_number;
+    cout << Errors.value(error_number, fail) << endl;
+}
+
 
 int main(int argc, char const *argv[])
 {

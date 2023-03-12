@@ -24,10 +24,12 @@ User::User(int _id, string _user, string _pass)
 }
 
 string User::get_user() { return user; }
+
 bool User::IsPassCorrect(string in_pass)
 {
     return in_pass == password;
 }
+
 int User::GetId() { return id; }
 
 Admin::Admin(int _id, string _user, string _pass) : User(_id, _user, _pass){};
@@ -85,8 +87,8 @@ vector<ResUserInfo *> Room::get_users() { return users; }
 
 JsonHandler::JsonHandler()
 {
-    ifstream room_file("includes/RoomsInfo.json");
-    ifstream user_file("includes/UsersInfo.json");
+    ifstream room_file("JsonFiles/RoomsInfo.json");
+    ifstream user_file("JsonFiles/UsersInfo.json");
     room_file >> room_data;
     user_file >> user_data;
     room_data = room_data["rooms"];
@@ -162,6 +164,7 @@ vector<ResUserInfo *> JsonHandler::read_users_of_room(json users)
 }
 
 vector<User *> JsonHandler::get_users() { return all_user; }
+
 vector<Room *> JsonHandler::get_rooms() { return all_room; }
 
 User *JsonHandler::FindUserByName(string in_user)

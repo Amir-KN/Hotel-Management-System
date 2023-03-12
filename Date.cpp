@@ -5,15 +5,6 @@ bool IsLeapYear(int year)
     return ((year % 400 == 0) || ((year % 4 == 0) && (year % 100 != 0)));
 }
 
-bool IsDigit(string str)
-{
-    for (int i = 0; i < str.length(); i++)
-    {
-        if ((str[i] != '0') && (!isdigit(str[i])))
-            return false;
-    }
-    return true;
-}
 
 bool IsValidDate(int d, int m, int y)
 {
@@ -52,7 +43,7 @@ bool CheckDate(string date_str)
     return IsValidDate(day, month, year);
 }
 
-Date::Date(string date_str = "1-1-2023")
+Date::Date(string date_str )
 {
     SetTime(date_str);
 }
