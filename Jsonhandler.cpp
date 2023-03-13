@@ -4,16 +4,23 @@ ResUserInfo::ResUserInfo(int _id, int _num_of_beds, string _res_date, string _ch
 {
     id = _id;
     num_of_beds = _num_of_beds;
-    res_date = _res_date;
-    checkout_date = _checkout_date;
+    res_date = Date(_res_date);
+    checkout_date = Date(_checkout_date);
 }
 
 void ResUserInfo::PrintResInfo()
 {
-    cout << "id : " << id << endl
-         << "Number Of Beds : " << num_of_beds << endl
-         << "Reserve Date : " << res_date << endl
-         << "checkout Date : " << checkout_date << endl;
+    cout << "id : " << id << endl;
+    cout << "Number Of Beds : " << num_of_beds << endl;
+    cout << "Reserve Date : ";
+    res_date.PrintDay();
+    cout << "checkout Date : ";
+    checkout_date.PrintDay();
+}
+
+Date ResUserInfo::getCheckoutDate()
+{
+    return checkout_date;
 }
 
 User::User(int _id, string _user, string _pass)
@@ -63,6 +70,8 @@ void NormalUser::print_user()
 
 bool NormalUser::is_admin() { return false; }
 
+int NormalUser::getPurse() { return stoi(purse); }
+
 Room::Room(string _number, int _status, int _price, int _maxCapacity, int _capacity, vector<ResUserInfo *> _users)
 {
     number = _number;
@@ -81,6 +90,38 @@ void Room::print_room()
          << "maxCapacity : " << maxCapacity << endl
          << "capacity : " << capacity << endl
          << endl;
+}
+
+string Room::getNum()
+{
+    return number;
+}
+
+int Room::getCapacity()
+{
+    return capacity;
+}
+
+int Room::getPrice()
+{
+    return price;
+}
+
+int Room::checkCapacity(Date reserveDate)
+{
+    int roomCapacity = capacity;
+    for (ResUserInfo *rsi : users)
+    {
+        if (rsi->getCheckoutDate().IsBefore(reserveDate))
+            roomCapacity++;
+    }
+    return roomCapacity;
+}
+
+void Room::reserve(int id, int numOfBeds, string resDate, string checkoutDate)
+{
+    ResUserInfo *newRes = new ResUserInfo(id, numOfBeds, resDate, checkoutDate);
+    users.push_back(newRes);
 }
 
 vector<ResUserInfo *> Room::get_users() { return users; }
@@ -173,6 +214,16 @@ User *JsonHandler::FindUserByName(string in_user)
     {
         if (user->get_user() == in_user)
             return user;
+    }
+    return NULL;
+}
+
+Room *JsonHandler::FindRoom(string numOfRoom)
+{
+    for (Room *room : all_room)
+    {
+        if (room->getNum() == numOfRoom)
+            return room;
     }
     return NULL;
 }

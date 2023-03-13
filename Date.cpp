@@ -5,7 +5,6 @@ bool IsLeapYear(int year)
     return ((year % 400 == 0) || ((year % 4 == 0) && (year % 100 != 0)));
 }
 
-
 bool IsValidDate(int d, int m, int y)
 {
     if (y > MAX_VALID_YR || y < MIN_VALID_YR)
@@ -43,7 +42,7 @@ bool CheckDate(string date_str)
     return IsValidDate(day, month, year);
 }
 
-Date::Date(string date_str )
+Date::Date(string date_str)
 {
     SetTime(date_str);
 }
@@ -67,6 +66,26 @@ void Date::PassDay(int num_day)
 void Date::PrintDay()
 {
     cout << day << " - " << month << " - " << year << endl;
+}
+
+bool Date::IsBefore(Date date)
+{
+    if (date.year > year)
+    {
+        return true;
+    }
+    else if (date.year == year && date.month > month)
+    {
+        return true;
+    }
+    else if (date.year == year && date.month == month && date.day >= day)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 void Date::GoNextDay()

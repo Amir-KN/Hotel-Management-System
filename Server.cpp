@@ -173,6 +173,7 @@ void Server::Send(int client_fd, string mess)
 void Server::CommandHandler(string command_line, int client_fd)
 {
     vector<string> command = BreakString(command_line);
+    User *currUser;
 
     if (command[0] == "signup")
     {
@@ -193,6 +194,8 @@ void Server::CommandHandler(string command_line, int client_fd)
         {
             if (Data.FindUserByName(command[1])->IsPassCorrect(command[2]))
                 Send(client_fd, "SIGNIN_OK");
+
+            currUser = Data.FindUserByName(command[1]);
         }
         else
         {
@@ -204,6 +207,46 @@ void Server::CommandHandler(string command_line, int client_fd)
     {
         Send(client_fd, "EXIT_OK");
     }
+
+    else if (command[0] == "4")
+    {
+        string numOfRoom;
+        int numOfBed;
+        string reserveDate;
+        string checkoutDate;
+
+        cin >> numOfRoom >> numOfBed >> reserveDate >> checkoutDate;
+
+        Room *tempRoom = Data.FindRoom(numOfRoom);
+        Date *reservationDate = new Date(reserveDate);
+
+        if (tempRoom != nullptr)
+        {
+
+            if (tempRoom->checkCapacity(*reservationDate) >= numOfBed)
+            {
+
+                if (currUser->getPurse() >= numOfBed * tempRoom->getPrice())
+                {
+                    tempRoom->reserve(currUser->GetId(), numOfBed, reserveDate, checkoutDate);
+                    Send(client_fd, "Successfully reserved");
+                }
+                else
+                {
+                    Send(client_fd, "Not enough balance!");
+                }
+            }
+            else
+            {
+
+                Send(client_fd, "Not enough capacity!");
+            }
+        }
+        else
+        {
+            Send(client_fd, "Room Not Found!");
+        }
+    }
 }
 
 void Server::PrintError(string error_number)
@@ -211,7 +254,6 @@ void Server::PrintError(string error_number)
     string fail = "Failed to read Error number " + error_number;
     cout << Errors.value(error_number, fail) << endl;
 }
-
 
 int main(int argc, char const *argv[])
 {

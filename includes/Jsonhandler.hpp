@@ -1,6 +1,7 @@
 #ifndef _Jsonhandler_
 #define _Jsonhandler_
 #include "Inclue.hpp"
+#include "Date.hpp"
 
 class Date;
 
@@ -9,12 +10,13 @@ class ResUserInfo
 public:
     ResUserInfo(int _id, int _num_of_beds, string _res_date, string _checkout_date);
     void PrintResInfo();
+    Date getCheckoutDate();
 
 private:
     int id;
     int num_of_beds;
-    string res_date;
-    string checkout_date;
+    Date res_date;
+    Date checkout_date;
 };
 
 class User
@@ -25,7 +27,8 @@ public:
     virtual void print_user() = 0;
     string get_user();
     bool IsPassCorrect(string in_pass);
-    int GetId() ;
+    int GetId();
+    virtual int getPurse() = 0;
 
 protected:
     int id;
@@ -41,6 +44,8 @@ public:
     void print_user();
 
     bool is_admin();
+
+    int getPurse();
 };
 
 class NormalUser : public User
@@ -50,7 +55,9 @@ public:
 
     void print_user();
 
-    bool is_admin() ;
+    bool is_admin();
+
+    int getPurse();
 
 private:
     string purse;
@@ -65,7 +72,18 @@ public:
 
     void print_room();
 
-    vector<ResUserInfo *> get_users() ;
+    string getNum();
+
+    int getCapacity();
+
+    int getPrice();
+
+    void reserve(int id, int numOfBeds, string resDate, string checkoutDate);
+
+    vector<ResUserInfo *> get_users();
+
+    int checkCapacity(Date reserveDate);
+
 private:
     string number;
     int status;
@@ -87,6 +105,8 @@ public:
     vector<ResUserInfo *> read_users_of_room(json users);
 
     User *FindUserByName(string in_user);
+
+    Room *FindRoom(string numOfRoom);
 
     bool IsUserExist(string target_user);
 
