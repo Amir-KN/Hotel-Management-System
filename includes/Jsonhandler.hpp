@@ -11,6 +11,9 @@ public:
     ResUserInfo(int _id, int _num_of_beds, string _res_date, string _checkout_date);
     void PrintResInfo();
     Date getCheckoutDate();
+    int getId();
+    int getNumOfBeds();
+    void cancelRes(int num);
 
 private:
     int id;
@@ -29,6 +32,8 @@ public:
     bool IsPassCorrect(string in_pass);
     int GetId();
     virtual int getPurse() = 0;
+    virtual void payment(float amount) = 0;
+    virtual void payback(float amount) = 0;
 
 protected:
     int id;
@@ -44,7 +49,8 @@ public:
     void print_user();
 
     bool is_admin();
-
+    void payment(float amount);
+    void payback(float amount);
     int getPurse();
 };
 
@@ -58,6 +64,9 @@ public:
     bool is_admin();
 
     int getPurse();
+
+    void payment(float amount);
+    void payback(float amount);
 
 private:
     string purse;
@@ -83,6 +92,8 @@ public:
     vector<ResUserInfo *> get_users();
 
     int checkCapacity(Date reserveDate);
+
+    bool cancelReservation(int id, int num);
 
 private:
     string number;
@@ -113,6 +124,8 @@ public:
     int GetNewId();
 
     void AddNewUser(NormalUser *new_user);
+
+    void printUserReservations(int uId);
 
     vector<User *> get_users();
 

@@ -210,15 +210,21 @@ void Server::CommandHandler(string command_line, int client_fd)
 
     else if (command[0] == "4")
     {
+        string bookCommand;
         string numOfRoom;
         int numOfBed;
         string reserveDate;
         string checkoutDate;
 
-        cin >> numOfRoom >> numOfBed >> reserveDate >> checkoutDate;
+        cin >> bookCommand >> numOfRoom >> numOfBed >> reserveDate >> checkoutDate;
 
         Room *tempRoom = Data.FindRoom(numOfRoom);
         Date *reservationDate = new Date(reserveDate);
+
+        if (bookCommand != "book")
+        {
+            Send(client_fd, "Invalid Input");
+        }
 
         if (tempRoom != nullptr)
         {
@@ -229,6 +235,7 @@ void Server::CommandHandler(string command_line, int client_fd)
                 if (currUser->getPurse() >= numOfBed * tempRoom->getPrice())
                 {
                     tempRoom->reserve(currUser->GetId(), numOfBed, reserveDate, checkoutDate);
+                    currUser->payment(numOfBed * tempRoom->getPrice());
                     Send(client_fd, "Successfully reserved");
                 }
                 else
@@ -246,6 +253,33 @@ void Server::CommandHandler(string command_line, int client_fd)
         {
             Send(client_fd, "Room Not Found!");
         }
+    }
+    else if (command[0] == "5")
+    {
+        Data.printUserReservations(currUser->GetId());
+        string cancelCommand;
+        string roomNum;
+        int num;
+        cin >> cancelCommand >> roomNum >> num;
+        Room *tempRoom = Data.FindRoom(roomNum);
+
+        if (cancelCommand != "cancel")
+        {
+            Send(client_fd, "Invalid Input");
+        }
+
+        if (tempRoom->cancelReservation(currUser->GetId(), num))
+        {
+            currUser->payback((num * tempRoom->getPrice()) / 2);
+            Send(client_fd, "Successfully Canceled");
+        }
+        else
+        {
+            Send(client_fd, "There is no such a reservation");
+        }
+    }
+    else if (command[0] == "6")
+    {
     }
 }
 

@@ -23,6 +23,15 @@ Date ResUserInfo::getCheckoutDate()
     return checkout_date;
 }
 
+void ResUserInfo::cancelRes(int num)
+{
+    num_of_beds -= num;
+}
+
+int ResUserInfo::getId() { return id; }
+
+int ResUserInfo::getNumOfBeds() { return num_of_beds; }
+
 User::User(int _id, string _user, string _pass)
 {
     id = _id;
@@ -66,6 +75,20 @@ void NormalUser::print_user()
          << "pursr : " << purse << endl
          << "phoneNumber : " << phoneNumber << endl
          << "address : " << address << endl;
+}
+
+void NormalUser::payment(float amount)
+{
+    int p = stof(purse);
+    p -= amount;
+    purse = to_string(p);
+}
+
+void NormalUser::payback(float amount)
+{
+    int p = stof(purse);
+    p += amount;
+    purse = to_string(p);
 }
 
 bool NormalUser::is_admin() { return false; }
@@ -122,6 +145,28 @@ void Room::reserve(int id, int numOfBeds, string resDate, string checkoutDate)
 {
     ResUserInfo *newRes = new ResUserInfo(id, numOfBeds, resDate, checkoutDate);
     users.push_back(newRes);
+}
+
+bool Room::cancelReservation(int id, int num)
+{
+
+    for (int i = 0; i < users.size(); i++)
+    {
+        if (users[i]->getId() == id && users[i]->getNumOfBeds() > num)
+        {
+            users[i]->cancelRes(num);
+            return true;
+        }
+        else if (users[i]->getId() == id && users[i]->getNumOfBeds() == num)
+        {
+            users.erase(users.begin() + i);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }
 
 vector<ResUserInfo *> Room::get_users() { return users; }
@@ -242,6 +287,18 @@ int JsonHandler::GetNewId()
 {
     int last_index = all_user.size() - 1;
     return all_user[last_index]->GetId() + 1;
+}
+
+void JsonHandler::printUserReservations(int uId)
+{
+    for (Room *room : all_room)
+    {
+        for (ResUserInfo *rui : room->get_users())
+        {
+            if (rui->getId() == uId)
+                rui->PrintResInfo();
+        }
+    }
 }
 
 void JsonHandler::AddNewUser(NormalUser *new_user)
