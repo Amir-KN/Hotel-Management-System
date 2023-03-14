@@ -100,6 +100,8 @@ public:
 
     bool cancelReservation(int id, int num);
 
+    void checkRoomsRes(Date sysDate);
+
 private:
     string number;
     int status;
@@ -133,6 +135,8 @@ public:
     void AddNewUser(NormalUser *new_user);
 
     void printUserReservations(int uId);
+
+    void checkCheckouts(Date sysDate);
 
     vector<User *> get_users();
 

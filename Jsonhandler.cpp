@@ -160,6 +160,18 @@ int Room::checkCapacity(Date reserveDate)
     return roomCapacity;
 }
 
+void Room::checkRoomsRes(Date sysDate)
+{
+    for (int i = 0; i < users.size(); i++)
+    {
+        if (users[i]->getCheckoutDate().IsBefore(sysDate))
+        {
+            capacity += users[i]->getNumOfBeds();
+            users.erase(users.begin() + i);
+        }
+    }
+}
+
 void Room::reserve(int id, int numOfBeds, string resDate, string checkoutDate)
 {
     ResUserInfo *newRes = new ResUserInfo(id, numOfBeds, resDate, checkoutDate);
@@ -174,11 +186,13 @@ bool Room::cancelReservation(int id, int num)
         if (users[i]->getId() == id && users[i]->getNumOfBeds() > num)
         {
             users[i]->cancelRes(num);
+            capacity += num;
             return true;
         }
         else if (users[i]->getId() == id && users[i]->getNumOfBeds() == num)
         {
             users.erase(users.begin() + i);
+            capacity += num;
             return true;
         }
         else
@@ -317,6 +331,14 @@ void JsonHandler::printUserReservations(int uId)
             if (rui->getId() == uId)
                 rui->PrintResInfo();
         }
+    }
+}
+
+void JsonHandler::checkCheckouts(Date sysDate)
+{
+    for (Room *room : all_room)
+    {
+        room->checkRoomsRes(sysDate);
     }
 }
 

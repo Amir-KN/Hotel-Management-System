@@ -55,12 +55,9 @@ void Date::SetTime(string date_str)
     day = stoi(date[0]);
 }
 
-void Date::PassDay(int num_day)
+void Date::PassDay()
 {
-    for (int i = 0; i < num_day; i++)
-    {
-        GoNextDay();
-    }
+    GoNextDay();
 }
 
 void Date::PrintDay()

@@ -18,7 +18,7 @@ class Date
 public:
     Date(string date_str = "1-1-2023");
     void SetTime(string date_str);
-    void PassDay(int num_day);
+    void PassDay();
     void PrintDay();
     bool IsBefore(Date date);
 

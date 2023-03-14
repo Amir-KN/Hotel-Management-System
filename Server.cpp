@@ -320,6 +320,28 @@ void Server::CommandHandler(string command_line, int client_fd)
     }
     else if (command[0] == "6")
     {
+        string passCommand;
+        int value;
+        cin >> passCommand >> value;
+
+        if (currUser->is_admin())
+        {
+            for (int i = 0; i < value; i++)
+            {
+                date.PassDay();
+                Data.checkCheckouts(date);
+            }
+        }
+        else
+        {
+            Send(client_fd, "Invalid Request");
+        }
+    }
+    else if (command[0] == "7")
+    {
+    }
+    else if (command[0] == "8")
+    {
     }
 }
 
