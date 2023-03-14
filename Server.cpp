@@ -374,6 +374,29 @@ void Server::CommandHandler(string command_line, int client_fd)
     }
     else if (command[0] == "8")
     {
+        string leaveCommand;
+        string value;
+
+        cout << "room <Room Number>";
+        cin >> leaveCommand >> value;
+
+        Room *tempRoom = Data.FindRoom(value);
+
+        if (tempRoom == nullptr)
+        {
+            Send(client_fd, "503 : Invalid Input");
+        }
+        else if (tempRoom->leaveRoom(currUser->GetId()))
+        {
+            Send(client_fd, "403 : OK");
+        }
+        else
+        {
+            Send(client_fd, "102 : Invalid Input");
+        }
+    }
+    else if (command[0] == "10")
+    {
     }
 }
 

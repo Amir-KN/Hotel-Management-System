@@ -216,6 +216,20 @@ bool Room::cancelReservation(int id, int num)
     }
 }
 
+bool Room::leaveRoom(int uId)
+{
+    for (int i = 0; i < users.size(); i++)
+    {
+        if (users[i]->getId() == uId)
+        {
+            capacity += users[i]->getNumOfBeds();
+            users.erase(users.begin() + i);
+            return true;
+        }
+    }
+    return false;
+}
+
 vector<ResUserInfo *> Room::get_users() { return users; }
 
 JsonHandler::JsonHandler()

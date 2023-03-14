@@ -106,6 +106,8 @@ public:
 
     void checkRoomsRes(Date sysDate);
 
+    bool leaveRoom(int uId);
+
 private:
     string number;
     int status;
