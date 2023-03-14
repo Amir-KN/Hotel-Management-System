@@ -48,9 +48,22 @@ bool User::IsPassCorrect(string in_pass)
 
 int User::GetId() { return id; }
 
+void User::editInfo(string newPassword)
+{
+    password = newPassword;
+}
+
+void NormalUser::editInfo(string newPass, int newPurse, string newPhone, string newAddress)
+{
+    password = newPass;
+    purse = newPurse;
+    phoneNumber = newPhone;
+    address = newAddress;
+}
+
 Admin::Admin(int _id, string _user, string _pass) : User(_id, _user, _pass){};
 
-int Admin::getPurse(){ return -1 ;}
+int Admin::getPurse() { return -1; }
 
 void Admin::print_user()
 {
@@ -61,14 +74,15 @@ void Admin::print_user()
 
 bool Admin::is_admin() { return true; }
 
-string Admin::GerUserInfo(){
+string Admin::GerUserInfo()
+{
     string user_info;
-    user_info = "*****************\nAdmin user : " + user + "\n" + "Id : " + to_string(id) + "\n" ;
+    user_info = "*****************\nAdmin user : " + user + "\n" + "Id : " + to_string(id) + "\n";
     return user_info;
 }
 
-void Admin::payback(float amount){}
-void Admin::payment(float amount){}
+void Admin::payback(float amount) {}
+void Admin::payment(float amount) {}
 
 NormalUser::NormalUser(int _id, string _user, string _pass, string _purse, string _phoneNumber, string _address)
     : User(_id, _user, _pass)
@@ -88,10 +102,10 @@ void NormalUser::print_user()
          << "address : " << address << endl;
 }
 
-string NormalUser::GerUserInfo(){
+string NormalUser::GerUserInfo()
+{
     string user_info;
-    user_info = "*****************\nNormal User : " + user + "\n" + "Id : " + to_string(id) + "\n" + "Purse : " + purse + "\n"
-                 + "Phone Number : " + phoneNumber + "\n" + "Address : " + address + "\n";
+    user_info = "*****************\nNormal User : " + user + "\n" + "Id : " + to_string(id) + "\n" + "Purse : " + purse + "\n" + "Phone Number : " + phoneNumber + "\n" + "Address : " + address + "\n";
 
     return user_info;
 }
@@ -347,6 +361,7 @@ void JsonHandler::AddNewUser(NormalUser *new_user)
     all_user.push_back(new_user);
 }
 
-int JsonHandler::GetNumOfUsers(){
+int JsonHandler::GetNumOfUsers()
+{
     return all_user.size();
 }

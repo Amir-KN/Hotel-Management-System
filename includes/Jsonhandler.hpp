@@ -35,6 +35,8 @@ public:
     virtual void payment(float amount) = 0;
     virtual void payback(float amount) = 0;
     virtual string GerUserInfo() = 0;
+    void editInfo(string newPassword);
+    void editInfo(string newPass, int newPurse, string newPhone, string newAddress);
 
 protected:
     int id;
@@ -72,6 +74,8 @@ public:
 
     void payment(float amount);
     void payback(float amount);
+
+    void editInfo(string newPass, int newPurse, string newPhone, string newAddress);
 
 private:
     string purse;
