@@ -50,6 +50,8 @@ int User::GetId() { return id; }
 
 Admin::Admin(int _id, string _user, string _pass) : User(_id, _user, _pass){};
 
+int Admin::getPurse(){ return -1 ;}
+
 void Admin::print_user()
 {
     cout << "id : " << id << endl
@@ -58,6 +60,15 @@ void Admin::print_user()
 }
 
 bool Admin::is_admin() { return true; }
+
+string Admin::GerUserInfo(){
+    string user_info;
+    user_info = "*****************\nAdmin user : " + user + "\n" + "Id : " + to_string(id) + "\n" ;
+    return user_info;
+}
+
+void Admin::payback(float amount){}
+void Admin::payment(float amount){}
 
 NormalUser::NormalUser(int _id, string _user, string _pass, string _purse, string _phoneNumber, string _address)
     : User(_id, _user, _pass)
@@ -75,6 +86,14 @@ void NormalUser::print_user()
          << "pursr : " << purse << endl
          << "phoneNumber : " << phoneNumber << endl
          << "address : " << address << endl;
+}
+
+string NormalUser::GerUserInfo(){
+    string user_info;
+    user_info = "*****************\nNormal User : " + user + "\n" + "Id : " + to_string(id) + "\n" + "Purse : " + purse + "\n"
+                 + "Phone Number : " + phoneNumber + "\n" + "Address : " + address + "\n";
+
+    return user_info;
 }
 
 void NormalUser::payment(float amount)
@@ -304,4 +323,8 @@ void JsonHandler::printUserReservations(int uId)
 void JsonHandler::AddNewUser(NormalUser *new_user)
 {
     all_user.push_back(new_user);
+}
+
+int JsonHandler::GetNumOfUsers(){
+    return all_user.size();
 }

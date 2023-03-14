@@ -21,13 +21,15 @@ private:
 
     string GetUserInfo();
 
-    bool CheckSign(string recv_mess_from_ser, int server_fd);
+    bool CheckSign(vector<string> command, string recv_mess_from_ser, int server_fd);
 
     string GetFirstCommand();
 
     string Recv(int server_fd);
 
-    void Menu();
+    void Send(int serevr_fd, string mess);
+
+    void Menu(string user);
 };
 
 

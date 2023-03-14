@@ -34,6 +34,7 @@ public:
     virtual int getPurse() = 0;
     virtual void payment(float amount) = 0;
     virtual void payback(float amount) = 0;
+    virtual string GerUserInfo() = 0;
 
 protected:
     int id;
@@ -47,6 +48,8 @@ public:
     Admin(int _id, string _user, string _pass);
 
     void print_user();
+
+    string GerUserInfo();
 
     bool is_admin();
     void payment(float amount);
@@ -64,6 +67,8 @@ public:
     bool is_admin();
 
     int getPurse();
+
+    string GerUserInfo();
 
     void payment(float amount);
     void payback(float amount);
@@ -122,6 +127,8 @@ public:
     bool IsUserExist(string target_user);
 
     int GetNewId();
+
+    int GetNumOfUsers();
 
     void AddNewUser(NormalUser *new_user);
 

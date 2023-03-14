@@ -24,7 +24,7 @@ void Client::Run()
         command = GetFirstCommand();
         send(server_fd, command.c_str(), strlen(command.c_str()), 0);
         string recv_mess = Recv(server_fd);
-        is_sign_ok = CheckSign(recv_mess, server_fd);
+        is_sign_ok = CheckSign(BreakString(command),recv_mess, server_fd);
         if (!is_sign_ok)
             break;
     }
@@ -65,7 +65,7 @@ string Client::GetUserInfo()
     return command;
 }
 
-bool Client::CheckSign(string recv_mess_from_ser, int server_fd)
+bool Client::CheckSign(vector<string> command, string recv_mess_from_ser, int server_fd)
 {
     string error_number;
 
@@ -85,7 +85,7 @@ bool Client::CheckSign(string recv_mess_from_ser, int server_fd)
     else if (recv_mess_from_ser == "SIGNIN_OK")
     {
         PrintError("230");
-        Menu();
+        Menu(command[1]);
     }
     else if (recv_mess_from_ser == "SIGNIN_NOT_OK")
         PrintError("430");
@@ -129,9 +129,58 @@ string Client::Recv(int server_fd)
     return string(buffer);
 }
 
-void Client::Menu()
+void Client::Send(int serevr_fd, string mess)
 {
-    cout << "IN MENU" << endl;
+    send(serevr_fd, mess.c_str(), mess.length(), 0);
+}
+
+void Client::Menu(string user)
+{
+    string command;
+    while (true)
+    {
+        cout << "1. View User Information" << endl
+             << "2. View All User" << endl;
+        cin >> command;
+        // if (commans is OK)
+        Send(server_fd, command);
+
+        if (command == "1")
+        {
+            
+            Send(server_fd, user);
+            string user_info = Recv(server_fd);
+            cout << user_info << endl;
+        }
+        else if (command == "2")
+        {
+            Send(server_fd, user);
+            cout << "** Send1 ***" << endl ;
+
+            string is_admin = Recv(server_fd);
+            cout << "** REC1 ***" << endl ;
+            if (is_admin == "NO")
+            {
+                PrintError("403");
+                return;
+            }
+            int num_of_users = stoi(Recv(server_fd));
+            cout << "** REC2 ***" << endl ;
+
+            
+            // for(int i = 0 ; i < num_of_users ; i++){
+            // cout << " *** in command 2 " << endl;
+            string user_information = Recv(server_fd) ;
+            cout << "** REC3 ***" << endl ;
+            cout << user_information << endl;
+            // }
+        }
+
+        if (command == "0")
+            break;
+    }
+
+    cout << "EXIT form MENU" << endl;
 }
 
 int main(int argc, char const *argv[])

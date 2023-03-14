@@ -190,10 +190,13 @@ void Server::CommandHandler(string command_line, int client_fd)
 
     else if (command[0] == "signin")
     {
+        cout << "comman1 : " << command[1]  << endl ;// << "*** command2 : " << command[2] << endl;
         if (Data.IsUserExist(command[1]))
         {
             if (Data.FindUserByName(command[1])->IsPassCorrect(command[2]))
+            {
                 Send(client_fd, "SIGNIN_OK");
+            }
 
             currUser = Data.FindUserByName(command[1]);
         }
@@ -206,6 +209,43 @@ void Server::CommandHandler(string command_line, int client_fd)
     else if (command[0] == "exit")
     {
         Send(client_fd, "EXIT_OK");
+    }
+    else if (command[0] == "1"){
+        string user = Recv(client_fd);
+        User* user_ptr = Data.FindUserByName(user);
+        Send(client_fd, user_ptr->GerUserInfo()) ;
+    }
+    else if (command[0] == "2")
+    {
+        string user = Recv(client_fd);
+        cout << "** REC1 ***" << endl ;
+
+        User *user_ptr = Data.FindUserByName(user);
+        if (!user_ptr->is_admin())
+        {
+            Send(client_fd, "NO");
+            cout << "** Send2 ***" << endl ;
+
+            return;
+        }
+        Send(client_fd, "YES");
+        cout << "** Send2 ***" << endl ;
+
+
+        int num_of_users = Data.GetNumOfUsers();
+        
+        Send(client_fd, to_string(num_of_users));
+        cout << "** Send3 ***" << endl ;
+
+        vector<User *> users = Data.get_users();
+
+        // for (int i = 0 ; i < num_of_users ; i++)
+        // {
+        // sleep(1);
+        Send(client_fd, users[1]->GerUserInfo());
+                    cout << "** Send4 ***" << endl ;
+
+        // }
     }
 
     else if (command[0] == "4")
