@@ -36,7 +36,7 @@ public:
     virtual void payback(float amount) = 0;
     virtual string GerUserInfo() = 0;
     void editInfo(string newPassword);
-    void editInfo(string newPass, int newPurse, string newPhone, string newAddress);
+    // void editInfo(string newPass, int newPurse, string newPhone, string newAddress);
 
 protected:
     int id;
@@ -107,6 +107,8 @@ public:
     void checkRoomsRes(Date sysDate);
 
     bool leaveRoom(int uId);
+
+    string GetInfoRoom(bool is_admin);
 
 private:
     string number;

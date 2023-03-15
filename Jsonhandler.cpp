@@ -63,6 +63,10 @@ void NormalUser::editInfo(string newPass, int newPurse, string newPhone, string 
 
 Admin::Admin(int _id, string _user, string _pass) : User(_id, _user, _pass){};
 
+
+    // void Admin::editInfo(string newPassword){ password = newPassword;};
+    // void Admin::editInfo(string newPass, int newPurse, string newPhone, string newAddress){};
+
 int Admin::getPurse() { return -1; }
 
 void Admin::print_user()

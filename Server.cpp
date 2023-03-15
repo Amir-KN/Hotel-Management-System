@@ -219,33 +219,26 @@ void Server::CommandHandler(string command_line, int client_fd)
     else if (command[0] == "2")
     {
         string user = Recv(client_fd);
-        cout << "** REC1 ***" << endl;
 
         User *user_ptr = Data.FindUserByName(user);
         if (!user_ptr->is_admin())
         {
             Send(client_fd, "NO");
-            cout << "** Send2 ***" << endl;
-
             return;
         }
-        Send(client_fd, "YES");
-        cout << "** Send2 ***" << endl;
 
         int num_of_users = Data.GetNumOfUsers();
+        Send(client_fd, "YES " + to_string(num_of_users));
+        sleep(1);
 
-        Send(client_fd, to_string(num_of_users));
-        cout << "** Send3 ***" << endl;
 
         vector<User *> users = Data.get_users();
-
-        // for (int i = 0 ; i < num_of_users ; i++)
-        // {
-        // sleep(1);
-        Send(client_fd, users[1]->GerUserInfo());
-        cout << "** Send4 ***" << endl;
-
-        // }
+        string users_info;
+        for (int i = 0 ; i < num_of_users ; i++)
+        {
+            users_info += users[i]->GerUserInfo();
+        }
+        Send(client_fd, users_info);
     }
 
     else if (command[0] == "4")
@@ -367,7 +360,9 @@ void Server::CommandHandler(string command_line, int client_fd)
             cout << "<new purse>";
             cin >> newPurse;
 
-            currUser->editInfo(newPass, newPurse, newPhone, newAddress);
+            //currUser->editInfo(newPass, newPurse, newPhone, newAddress);
+            dynamic_cast<NormalUser*> (currUser)->editInfo(newPass, newPurse, newPhone, newAddress);
+
 
             cout << "Succussfully edited" << endl;
         }

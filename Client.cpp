@@ -155,25 +155,20 @@ void Client::Menu(string user)
         else if (command == "2")
         {
             Send(server_fd, user);
-            cout << "** Send1 ***" << endl ;
 
-            string is_admin = Recv(server_fd);
-            cout << "** REC1 ***" << endl ;
+
+            vector<string> recv_mess = BreakString( Recv(server_fd));
+            string is_admin = recv_mess[0];
+
             if (is_admin == "NO")
             {
                 PrintError("403");
                 return;
             }
-            int num_of_users = stoi(Recv(server_fd));
-            cout << "** REC2 ***" << endl ;
+            int num_of_users = stoi( recv_mess[1] );
 
-            
-            // for(int i = 0 ; i < num_of_users ; i++){
-            // cout << " *** in command 2 " << endl;
             string user_information = Recv(server_fd) ;
-            cout << "** REC3 ***" << endl ;
             cout << user_information << endl;
-            // }
         }
 
         if (command == "0")
