@@ -44,6 +44,8 @@ private:
     void CommandHandler(string command_line, int client_fd);
 
     void PrintError(string error_number) ;
+
+    void HandleRoomsCommand(string command,int client_fd);
 };
 
 #endif

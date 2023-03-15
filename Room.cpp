@@ -94,6 +94,10 @@ int Room::getCapacity()
     return capacity;
 }
 
+int Room::GetMaxCapacity(){
+    return maxCapacity;
+}
+
 int Room::getPrice()
 {
     return price;
@@ -169,3 +173,17 @@ bool Room::leaveRoom(int uId)
 
 
 vector<ResUserInfo *> Room::get_users() { return users; }
+
+void Room::ModifyRoom(int new_max_c, int new_price){
+    maxCapacity = new_max_c;
+    price = new_price;
+}
+
+void Room::CheckStatus(){
+    if (capacity == maxCapacity){
+        status = 1;
+    }
+    else 
+        status = 0;
+}
+

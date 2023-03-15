@@ -21,7 +21,7 @@ void Client::Run()
     {
         cout << "Write Command :\n  --> signin <username> <password>\n  --> signup <username>\n  --> exit\n"
              << endl;
-        command = GetFirstCommand();
+        command = GetCommand();
         send(server_fd, command.c_str(), strlen(command.c_str()), 0);
         string recv_mess = Recv(server_fd);
         is_sign_ok = CheckSign(BreakString(command),recv_mess, server_fd);
@@ -102,7 +102,7 @@ bool Client::CheckSign(vector<string> command, string recv_mess_from_ser, int se
     return true;
 }
 
-string Client::GetFirstCommand()
+string Client::GetCommand()
 {
     string command = "";
     vector<string> commands;
@@ -110,13 +110,15 @@ string Client::GetFirstCommand()
     {
         getline(cin, command);
         commands = BreakString(command);
-        if ((command == "") || (command == " ") || (command == "\n") || (command == "  "))
+        if ((command == "") || (command == " ") || (command == "\n") || (command == "  ") || (command == "\n\n"))
             continue;
+
         if (commands.size() == 0 || (!((commands[0] == "signup") || (commands[0] == "signin") || (commands[0] == "exit"))))
         {
-            cout << "Invalid Command" << endl;
+            PrintError("503");
             continue;
         }
+
         return command;
     }
 }
@@ -139,9 +141,12 @@ void Client::Menu(string user)
     string command;
     while (true)
     {
-        cout << "1. View User Information" << endl
+        cout << endl
+             << "      ** Choose Option :  **" << endl
+             << "1. View User Information" << endl
              << "2. View All User" << endl
-             << "3. View Rooms Information" << endl;
+             << "3. View Rooms Information" << endl
+             << "9. Rooms" << endl;
         cin >> command;
         // if (commans is OK)
         Send(server_fd, command);
@@ -176,6 +181,29 @@ void Client::Menu(string user)
             cout << rooms_info << endl ;
             
 
+        }
+        else if (command == "9") {
+            Send(server_fd, user);
+            string is_admin =  Recv(server_fd);
+
+            if (is_admin == "NO")
+            {
+                PrintError("403");
+                continue;;
+            }
+            cout << "Write Command :" << endl 
+                << "    add <RoomNuum> <Max Capacity> <Price>" << endl 
+                << "    modify <RoomNum> <new Max Capacity> <new Price>" << endl
+                << "    remove <RoomNum>" << endl <<"--> " ;
+            string command;getline(cin, command);
+            getline(cin, command);
+            
+            Send(server_fd, command);
+            cout << "** BEFORE REC **" << endl;
+
+            string err_num = Recv(server_fd);
+            PrintError(err_num);
+            
         }
         if (command == "0")
             break;

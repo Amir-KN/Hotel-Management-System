@@ -1,8 +1,5 @@
 #include "includes/Jsonhandler.hpp"
 
-
-
-
 JsonHandler::JsonHandler()
 {
     ifstream room_file("JsonFiles/RoomsInfo.json");
@@ -145,3 +142,20 @@ void JsonHandler::AddNewUser(NormalUser *new_user)
 {
     all_user.push_back(new_user);
 }
+
+void JsonHandler::RemoveRoom(string num)
+{
+    for (int i = 0; i < all_room.size(); i++)
+    {
+        if (all_room[i]->getNum() == num)
+        {
+            all_room.erase(all_room.begin() + i);
+            return;
+        }
+    }
+}
+
+void JsonHandler::AddNewRoom(Room* new_room){
+    all_room.push_back(new_room);
+}
+

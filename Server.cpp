@@ -249,6 +249,18 @@ void Server::CommandHandler(string command_line, int client_fd)
         }
         Send(client_fd, rooms_info);
     }
+    else if (command[0] == "9"){
+        string user = Recv(client_fd);
+        User *user_ptr = Data.FindUserByName(user);
+        if (!user_ptr->is_admin())
+        {
+            Send(client_fd, "NO");
+            return;
+        }
+        Send(client_fd, "YES" );
+        string recv_command = Recv(client_fd);
+        HandleRoomsCommand(recv_command, client_fd);
+    }
 
     else if (command[0] == "4")
     {
@@ -399,8 +411,65 @@ void Server::CommandHandler(string command_line, int client_fd)
             Send(client_fd, "102 : Invalid Input");
         }
     }
+
     else if (command[0] == "10")
     {
+    }
+}
+
+void Server::HandleRoomsCommand(string command, int client_fd){
+    
+    vector<string> commands = BreakString(command);
+    if (commands.size() < 2) {
+        Send(client_fd, "503");
+        return;
+    }
+    Room *room = Data.FindRoom(commands[1]);
+    if (commands[0] == "add")
+    {
+        if (room != NULL)
+        {
+            Send(client_fd, "111");
+            return;
+        }
+
+        vector<ResUserInfo *> temp ;
+        Room *r = new Room(commands[1], 0, stoi(commands[3]), stoi(commands[2]), 0, temp);
+        Data.AddNewRoom(r);
+        Send(client_fd, "104");
+    }
+    else if (commands[0] == "modify")
+    {
+        if (room == NULL) // there is not room
+        {
+            Send(client_fd, "101");
+            return;
+        }
+        if ((room->getCapacity() == 0) || (stoi(commands[2]) < room->GetMaxCapacity() - room->getCapacity())) // room is full or we cant remove any body
+        {
+            Send(client_fd, "109");
+            return;
+        }
+        room->ModifyRoom(stoi(commands[2]), stoi(commands[3]));
+        room->CheckStatus();
+        Send(client_fd, "105");
+    }
+    else if (commands[0] == "remove"){
+        if (room == NULL) // there is not room
+        {
+            Send(client_fd, "101");
+            return;
+        }
+        if ( room->GetMaxCapacity() - room->getCapacity() > 0 ) 
+        {
+            Send(client_fd, "109");
+            return;
+        }
+        Data.RemoveRoom(room->getNum());
+        Send(client_fd, "106");
+    }
+    else {
+        Send(client_fd, "503");
     }
 }
 

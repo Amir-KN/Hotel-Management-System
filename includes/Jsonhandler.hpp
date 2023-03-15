@@ -25,6 +25,7 @@ public:
 
     int GetNewId();
 
+    void AddNewRoom(Room* new_room);
 
     void AddNewUser(NormalUser *new_user);
 
@@ -32,9 +33,12 @@ public:
 
     void checkCheckouts(Date sysDate);
 
+    void RemoveRoom(string num);
+
     vector<User *> get_users();
 
     vector<Room *> get_rooms();
+
 
 private:
     json room_data;

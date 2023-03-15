@@ -23,7 +23,7 @@ private:
 
     bool CheckSign(vector<string> command, string recv_mess_from_ser, int server_fd);
 
-    string GetFirstCommand();
+    string GetCommand();
 
     string Recv(int server_fd);
 

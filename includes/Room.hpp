@@ -28,13 +28,15 @@ private:
 class Room
 {
 public:
-    Room(string _number, int _status, int _price, int _maxCapacity, int _capacity, vector<ResUserInfo *> _users);
+    Room(string _number, int _status, int _price, int _maxCapacity, int _capacity, vector<ResUserInfo *> _users) ;
 
     void print_room();
 
     string getNum();
 
     int getCapacity();
+
+    int GetMaxCapacity();
 
     int getPrice();
 
@@ -53,6 +55,10 @@ public:
     string GetUserInRoom();
 
     string GetInfoRoom(bool is_admin);
+
+    void ModifyRoom(int new_max_c, int new_price);
+
+    void CheckStatus();
 
 private:
     string number;
