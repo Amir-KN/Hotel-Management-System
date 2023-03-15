@@ -6,6 +6,8 @@
 #include "Function.hpp"
 #include "Jsonhandler.hpp"
 #include "Date.hpp"
+#include "Room.hpp"
+
 
 class Server
 {

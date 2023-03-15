@@ -17,6 +17,8 @@ SERVER_OBJECTS = \
 	$(BUILD_DIR)/Jsonhandler.o \
 	$(BUILD_DIR)/Server.o \
 	$(BUILD_DIR)/Function.o \
+	$(BUILD_DIR)/Room.o \
+	$(BUILD_DIR)/User.o \
 
 
 CLIENT_OBJECTS = \
@@ -45,6 +47,14 @@ ClientSensitivityList = \
 	$(CPP_DIR)/Client.cpp \
 	$(HPP_DIR)/Client.hpp
 
+RoomSensitivityList = \
+	$(CPP_DIR)/Room.cpp \
+	$(HPP_DIR)/Room.hpp
+
+UserSensitivityList = \
+	$(CPP_DIR)/User.cpp \
+	$(HPP_DIR)/User.hpp
+
 
 
 $(BUILD_DIR):
@@ -59,6 +69,12 @@ $(BUILD_DIR)/Function.o: $(FunctionSensitivityList)
 
 $(BUILD_DIR)/Jsonhandler.o: $(jsonhandlerSensitivityList)
 	$(CC) $(STD) -c $(CPP_DIR)/Jsonhandler.cpp -o $(BUILD_DIR)/Jsonhandler.o
+
+$(BUILD_DIR)/Room.o: $(RoomSensitivityList)
+	$(CC) $(STD) -c $(CPP_DIR)/Room.cpp -o $(BUILD_DIR)/Room.o
+
+$(BUILD_DIR)/User.o: $(UserSensitivityList)
+	$(CC) $(STD) -c $(CPP_DIR)/User.cpp -o $(BUILD_DIR)/User.o
 
 $(BUILD_DIR)/Server.o: $(ServerSensitivityList)
 	$(CC) $(STD) -c $(CPP_DIR)/Server.cpp -o $(BUILD_DIR)/Server.o

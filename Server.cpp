@@ -248,7 +248,6 @@ void Server::CommandHandler(string command_line, int client_fd)
             rooms_info += rooms[i]->GetInfoRoom(is_admin);
         }
         Send(client_fd, rooms_info);
-
     }
 
     else if (command[0] == "4")
@@ -304,7 +303,7 @@ void Server::CommandHandler(string command_line, int client_fd)
         string roomNum;
         int num;
         cin >> cancelCommand >> roomNum >> num;
-        Room *tempRoom = Data.FindRoom(roomNum);
+        Room* tempRoom = Data.FindRoom(roomNum);
 
         if (cancelCommand != "cancel")
         {
