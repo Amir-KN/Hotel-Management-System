@@ -227,18 +227,28 @@ void Server::CommandHandler(string command_line, int client_fd)
             return;
         }
 
-        int num_of_users = Data.GetNumOfUsers();
-        Send(client_fd, "YES " + to_string(num_of_users));
+        Send(client_fd, "YES" );
         sleep(1);
-
 
         vector<User *> users = Data.get_users();
         string users_info;
-        for (int i = 0 ; i < num_of_users ; i++)
+        for (int i = 0 ; i < users.size() ; i++)
         {
             users_info += users[i]->GerUserInfo();
         }
         Send(client_fd, users_info);
+    }
+    else if (command[0] == "3"){
+        string user = Recv(client_fd);
+        User *user_ptr = Data.FindUserByName(user);
+        bool is_admin = user_ptr->is_admin();
+        vector<Room*> rooms = Data.get_rooms();
+        string rooms_info;
+        for(int i = 0 ; i < rooms.size() ; i++){
+            rooms_info += rooms[i]->GetInfoRoom(is_admin);
+        }
+        Send(client_fd, rooms_info);
+
     }
 
     else if (command[0] == "4")

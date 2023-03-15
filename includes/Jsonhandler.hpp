@@ -10,6 +10,7 @@ class ResUserInfo
 public:
     ResUserInfo(int _id, int _num_of_beds, string _res_date, string _checkout_date);
     void PrintResInfo();
+    string GetUserInfo();
     Date getCheckoutDate();
     int getId();
     int getNumOfBeds();
@@ -108,6 +109,8 @@ public:
 
     bool leaveRoom(int uId);
 
+    string GetUserInRoom();
+
     string GetInfoRoom(bool is_admin);
 
 private:
@@ -138,7 +141,6 @@ public:
 
     int GetNewId();
 
-    int GetNumOfUsers();
 
     void AddNewUser(NormalUser *new_user);
 

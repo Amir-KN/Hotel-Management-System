@@ -21,6 +21,7 @@ public:
     void PassDay();
     void PrintDay();
     bool IsBefore(Date date);
+    string GetStr();
 
 private:
     int day;

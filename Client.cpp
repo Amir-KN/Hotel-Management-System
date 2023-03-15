@@ -140,7 +140,8 @@ void Client::Menu(string user)
     while (true)
     {
         cout << "1. View User Information" << endl
-             << "2. View All User" << endl;
+             << "2. View All User" << endl
+             << "3. View Rooms Information" << endl;
         cin >> command;
         // if (commans is OK)
         Send(server_fd, command);
@@ -157,20 +158,25 @@ void Client::Menu(string user)
             Send(server_fd, user);
 
 
-            vector<string> recv_mess = BreakString( Recv(server_fd));
-            string is_admin = recv_mess[0];
+            string is_admin =  Recv(server_fd);
 
             if (is_admin == "NO")
             {
                 PrintError("403");
-                return;
+                continue;;
             }
-            int num_of_users = stoi( recv_mess[1] );
 
             string user_information = Recv(server_fd) ;
             cout << user_information << endl;
         }
+        else if (command == "3"){
+            Send(server_fd, user);
+            string rooms_info ;
+            rooms_info = Recv(server_fd);
+            cout << rooms_info << endl ;
+            
 
+        }
         if (command == "0")
             break;
     }

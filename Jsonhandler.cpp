@@ -18,6 +18,13 @@ void ResUserInfo::PrintResInfo()
     checkout_date.PrintDay();
 }
 
+string ResUserInfo::GetUserInfo(){
+    string user_info;
+    user_info = "   User Id : " + to_string(id) + "\n   Num of Beds : " + to_string(num_of_beds) + "\n   Reserve Date : " + res_date.GetStr() +
+                "   Checkout Date : " + checkout_date.GetStr() + "  ---------------------------\n";
+    return user_info;
+}
+
 Date ResUserInfo::getCheckoutDate()
 {
     return checkout_date;
@@ -63,9 +70,6 @@ void NormalUser::editInfo(string newPass, int newPurse, string newPhone, string 
 
 Admin::Admin(int _id, string _user, string _pass) : User(_id, _user, _pass){};
 
-
-    // void Admin::editInfo(string newPassword){ password = newPassword;};
-    // void Admin::editInfo(string newPass, int newPurse, string newPhone, string newAddress){};
 
 int Admin::getPurse() { return -1; }
 
@@ -150,6 +154,29 @@ void Room::print_room()
          << "maxCapacity : " << maxCapacity << endl
          << "capacity : " << capacity << endl
          << endl;
+}
+
+string Room::GetUserInRoom()
+{
+    string users_info;
+    users_info = "---> Users in Room :\n" ;
+    if (users.size() == 0)
+        users_info += "   This Room Is Empty!\n";
+    else
+        for(int i=0 ; i < users.size() ; i++){
+            users_info += users[i]->GetUserInfo();
+        }
+        
+    return users_info;
+}
+
+string Room::GetInfoRoom(bool is_admin)
+{ 
+    string room_info ;
+    room_info = "\n**************\nRoom Number : " + number + "\nStatus : " + to_string(status) + "\nPrice : " + to_string(price) + 
+                "\nMax Capacity : " + to_string(maxCapacity) + "\n" + GetUserInRoom() ;
+    return room_info;
+
 }
 
 string Room::getNum()
@@ -377,9 +404,4 @@ void JsonHandler::checkCheckouts(Date sysDate)
 void JsonHandler::AddNewUser(NormalUser *new_user)
 {
     all_user.push_back(new_user);
-}
-
-int JsonHandler::GetNumOfUsers()
-{
-    return all_user.size();
 }

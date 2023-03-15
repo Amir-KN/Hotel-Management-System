@@ -19,7 +19,7 @@
 
 using namespace std;
 using json = nlohmann::json;
-#define MAX_LEN_MESS 1024
+#define MAX_LEN_MESS 2048
 
 
 #endif
