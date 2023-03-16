@@ -15,7 +15,10 @@ Server::Server()
 
 void Server::Run()
 {
-    SetupServer();
+    if (!SetupServer()) {
+        cout << "*** Server Run Before ***" << endl;
+        return;
+    }
     char buffer[1024] = {0};
 
     FD_ZERO(&master_set);
@@ -28,7 +31,7 @@ void Server::Run()
     while (is_con)
     {
         working_set = master_set;
-        cout << "> Write Command:\n   --> settime: <setTime> <Date>\n   --> Close server: Exit" << endl;
+        cout << "> Write Command:\n   --> settime: <setTime> <Date>\n   --> Close server: exit" << endl;
         select(max_sd + 1, &working_set, NULL, NULL, NULL);
 
         for (int i = 0; i <= max_sd; i++)
@@ -58,21 +61,28 @@ void Server::Run()
     }
 }
 
-void Server::SetupServer()
+bool Server::SetupServer()
 {
     struct sockaddr_in address;
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
+    
+
 
     int opt = 1;
     setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
-
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(port);
 
-    bind(server_fd, (struct sockaddr *)&address, sizeof(address));
+    int temp = bind(server_fd, (struct sockaddr *)&address, sizeof(address));
+    if (temp == -1)
+    {
+        close(server_fd);
+        return false;
+    }
 
     listen(server_fd, 4);
+    return true;
 }
 
 int Server::AcceptClient(int server_fd)

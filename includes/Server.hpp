@@ -25,7 +25,7 @@ private:
     JsonHandler Data;
     bool is_con;
 
-    void SetupServer();
+    bool SetupServer();
 
     int AcceptClient(int server_fd);
 

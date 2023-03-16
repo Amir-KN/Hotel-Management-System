@@ -86,6 +86,7 @@ bool Client::CheckSign(vector<string> command, string recv_mess_from_ser, int se
     {
         PrintError("230");
         Menu(command[1]);
+        return false;
     }
     else if (recv_mess_from_ser == "SIGNIN_NOT_OK")
         PrintError("430");
@@ -146,7 +147,8 @@ void Client::Menu(string user)
              << "1. View User Information" << endl
              << "2. View All User" << endl
              << "3. View Rooms Information" << endl
-             << "9. Rooms" << endl;
+             << "9. Rooms" << endl
+             << "0. Logout" << endl;
         cin >> command;
         // if (commans is OK)
         Send(server_fd, command);
@@ -205,11 +207,11 @@ void Client::Menu(string user)
             PrintError(err_num);
             
         }
-        if (command == "0")
+        else if (command == "0")
             break;
     }
 
-    cout << "EXIT form MENU" << endl;
+    PrintError("201");
 }
 
 int main(int argc, char const *argv[])
