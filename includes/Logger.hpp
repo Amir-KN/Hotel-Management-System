@@ -1,12 +1,15 @@
 #ifndef _Logger_
 #define _Logger_
 #include "Inclue.hpp"
+#include "Date.hpp"
 
 const string FOLDER = "Logs/";
 
 class Logger
 {
 public:
+    // Logger(Date _date);
+    void UpdateDate(Date _date);
     void Signup(string user, bool is_ok);
     void Signin(string user, bool is_ok);
     void ViewUserInfo(string user);
@@ -22,6 +25,7 @@ public:
 
 private:
     string GetPath(string user);
+    Date date;
 };
 
 

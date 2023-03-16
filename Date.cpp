@@ -113,8 +113,8 @@ int Date::days_of_month(int m, int y)
 }
 
 
-string Date::GetStr(){
+string Date::GetStr(string op){
     string date_str;
-    date_str = to_string(day) + "-" + to_string(month) + "-" + to_string(year) + "\n";
+    date_str = to_string(day) + "-" + to_string(month) + "-" + to_string(year) + op;
     return date_str;
 }

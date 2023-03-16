@@ -11,6 +11,7 @@ Server::Server()
     port = Config["commandChannelPort"].get<int>();
 
     is_con = true;
+    Log.UpdateDate(date);
 }
 
 void Server::Run()
@@ -366,6 +367,7 @@ void Server::CommandHandler(string command_line, int client_fd)
                 Data.checkCheckouts(date);
             }
             Send(client_fd, "Done");
+            Log.UpdateDate(date);
         }
         else
         {
