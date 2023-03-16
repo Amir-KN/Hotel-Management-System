@@ -19,6 +19,7 @@ SERVER_OBJECTS = \
 	$(BUILD_DIR)/Function.o \
 	$(BUILD_DIR)/Room.o \
 	$(BUILD_DIR)/User.o \
+	$(BUILD_DIR)/Logger.o \
 
 
 CLIENT_OBJECTS = \
@@ -55,6 +56,10 @@ UserSensitivityList = \
 	$(CPP_DIR)/User.cpp \
 	$(HPP_DIR)/User.hpp
 
+LoggerSensitivityList = \
+	$(CPP_DIR)/Logger.cpp \
+	$(HPP_DIR)/Logger.hpp
+
 
 
 $(BUILD_DIR):
@@ -75,6 +80,9 @@ $(BUILD_DIR)/Room.o: $(RoomSensitivityList)
 
 $(BUILD_DIR)/User.o: $(UserSensitivityList)
 	$(CC) $(STD) -c $(CPP_DIR)/User.cpp -o $(BUILD_DIR)/User.o
+
+$(BUILD_DIR)/Logger.o: $(LoggerSensitivityList)
+	$(CC) $(STD) -c $(CPP_DIR)/Logger.cpp -o $(BUILD_DIR)/Logger.o
 
 $(BUILD_DIR)/Server.o: $(ServerSensitivityList)
 	$(CC) $(STD) -c $(CPP_DIR)/Server.cpp -o $(BUILD_DIR)/Server.o

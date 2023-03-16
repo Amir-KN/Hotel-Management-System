@@ -7,7 +7,7 @@
 #include "Jsonhandler.hpp"
 #include "Date.hpp"
 #include "Room.hpp"
-
+#include "Logger.hpp"
 
 class Server
 {
@@ -24,6 +24,7 @@ private:
     Date date;
     JsonHandler Data;
     bool is_con;
+    Logger Log;
 
     bool SetupServer();
 
@@ -45,7 +46,7 @@ private:
 
     void PrintError(string error_number) ;
 
-    void HandleRoomsCommand(string command,int client_fd);
+    void HandleRoomsCommand(string user, string command,int client_fd);
 };
 
 #endif

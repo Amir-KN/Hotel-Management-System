@@ -201,7 +201,6 @@ void Client::Menu(string user)
             getline(cin, command);
             
             Send(server_fd, command);
-            cout << "** BEFORE REC **" << endl;
 
             string err_num = Recv(server_fd);
             PrintError(err_num);

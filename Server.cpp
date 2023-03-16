@@ -162,9 +162,10 @@ string Server::SignupUser(int client_fd, string username, string in_user_info)
         cout << user_info.size() << endl;
         NormalUser *new_user = new NormalUser(new_id, username, user_info[0], user_info[1], user_info[2], user_info[3]);
         Data.AddNewUser(new_user);
+        Log.Signup(username, true);
         return "231";
     }
-
+    Log.Signup(username, false);
     return "503";
 }
 
@@ -191,6 +192,7 @@ void Server::CommandHandler(string command_line, int client_fd)
             Send(client_fd, "SIGNUP_NOT_OK");
         else
         {
+            
             Send(client_fd, "SIGNUP_OK");
             string UserInfo = Recv(client_fd);
             string error_num = SignupUser(client_fd, command[1], UserInfo);
@@ -200,18 +202,21 @@ void Server::CommandHandler(string command_line, int client_fd)
 
     else if (command[0] == "signin")
     {
-        cout << "comman1 : " << command[1] << endl; // << "*** command2 : " << command[2] << endl;
+        cout << "comman1 : " << command[1] << endl;
         if (Data.IsUserExist(command[1]))
         {
             if (Data.FindUserByName(command[1])->IsPassCorrect(command[2]))
             {
                 Send(client_fd, "SIGNIN_OK");
+                Log.Signin(command[1], true);
             }
 
             currUser = Data.FindUserByName(command[1]);
+
         }
         else
         {
+            Log.Signin(command[1], false);
             Send(client_fd, "SIGNIN_NOT_OK");
         }
     }
@@ -225,6 +230,7 @@ void Server::CommandHandler(string command_line, int client_fd)
         string user = Recv(client_fd);
         User *user_ptr = Data.FindUserByName(user);
         Send(client_fd, user_ptr->GerUserInfo());
+        Log.ViewUserInfo(user);
     }
     else if (command[0] == "2")
     {
@@ -234,6 +240,7 @@ void Server::CommandHandler(string command_line, int client_fd)
         if (!user_ptr->is_admin())
         {
             Send(client_fd, "NO");
+            Log.ViewAllUser(user, false);
             return;
         }
 
@@ -247,6 +254,7 @@ void Server::CommandHandler(string command_line, int client_fd)
             users_info += users[i]->GerUserInfo();
         }
         Send(client_fd, users_info);
+        Log.ViewAllUser(user, true);
     }
     else if (command[0] == "3"){
         string user = Recv(client_fd);
@@ -258,6 +266,7 @@ void Server::CommandHandler(string command_line, int client_fd)
             rooms_info += rooms[i]->GetInfoRoom(is_admin);
         }
         Send(client_fd, rooms_info);
+        Log.ViewRoomInfo(user);
     }
     else if (command[0] == "9"){
         string user = Recv(client_fd);
@@ -265,11 +274,12 @@ void Server::CommandHandler(string command_line, int client_fd)
         if (!user_ptr->is_admin())
         {
             Send(client_fd, "NO");
+            Log.Rooms(user, false, "NO_ERROR");
             return;
         }
         Send(client_fd, "YES" );
         string recv_command = Recv(client_fd);
-        HandleRoomsCommand(recv_command, client_fd);
+        HandleRoomsCommand(user, recv_command, client_fd);
     }
 
     else if (command[0] == "4")
@@ -427,11 +437,12 @@ void Server::CommandHandler(string command_line, int client_fd)
     }
 }
 
-void Server::HandleRoomsCommand(string command, int client_fd){
+void Server::HandleRoomsCommand(string user, string command, int client_fd){
     
     vector<string> commands = BreakString(command);
     if (commands.size() < 2) {
         Send(client_fd, "503");
+        Log.Rooms(user, true, "503");
         return;
     }
     Room *room = Data.FindRoom(commands[1]);
@@ -440,46 +451,55 @@ void Server::HandleRoomsCommand(string command, int client_fd){
         if (room != NULL)
         {
             Send(client_fd, "111");
+            Log.Rooms(user, true, "111");
             return;
         }
 
         vector<ResUserInfo *> temp ;
-        Room *r = new Room(commands[1], 0, stoi(commands[3]), stoi(commands[2]), 0, temp);
+        Room *r = new Room(commands[1], 0, stoi(commands[3]), stoi(commands[2]), stoi(commands[2]), temp);
         Data.AddNewRoom(r);
         Send(client_fd, "104");
+        Log.Rooms(user, true, "104", "Number : " + commands[1]);
     }
     else if (commands[0] == "modify")
     {
-        if (room == NULL) // there is not room
+        if (room == NULL) // tnot exist room
         {
             Send(client_fd, "101");
+            Log.Rooms(user, true, "101");
             return;
         }
         if ((room->getCapacity() == 0) || (stoi(commands[2]) < room->GetMaxCapacity() - room->getCapacity())) // room is full or we cant remove any body
         {
             Send(client_fd, "109");
+            Log.Rooms(user, true, "109");
             return;
         }
         room->ModifyRoom(stoi(commands[2]), stoi(commands[3]));
         room->CheckStatus();
         Send(client_fd, "105");
+        Log.Rooms(user, true, "105", "Number : " + commands[1]);
     }
     else if (commands[0] == "remove"){
         if (room == NULL) // there is not room
         {
             Send(client_fd, "101");
+            Log.Rooms(user, true, "101");
             return;
         }
         if ( room->GetMaxCapacity() - room->getCapacity() > 0 ) 
         {
             Send(client_fd, "109");
+            Log.Rooms(user, true, "109");
             return;
         }
         Data.RemoveRoom(room->getNum());
         Send(client_fd, "106");
+        Log.Rooms(user, true, "106", "Number : " + commands[1]);
     }
     else {
         Send(client_fd, "503");
+        Log.Rooms(user, true, "503");
     }
 }
 
