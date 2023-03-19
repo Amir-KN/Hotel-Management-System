@@ -30,6 +30,8 @@ private:
     void Send(int serevr_fd, string mess);
 
     void Menu(string user);
+
+    bool CheckFirstCommand(string command);
 };
 
 

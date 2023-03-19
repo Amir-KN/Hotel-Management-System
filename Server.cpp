@@ -109,6 +109,7 @@ bool Server::GetFromBuffer()
         if (CheckDate(command[1]))
         {
             date.SetTime(command[1]);
+            Log.UpdateDate(date);
             PrintError("600");
         }
         else
@@ -200,20 +201,16 @@ void Server::CommandHandler(string command_line, int client_fd)
             Send(client_fd, error_num);
         }
     }
-
     else if (command[0] == "signin")
     {
         cout << "comman1 : " << command[1] << endl;
-        if (Data.IsUserExist(command[1]))
+        if ((Data.IsUserExist(command[1])) && (Data.FindUserByName(command[1])->IsPassCorrect(command[2])))
         {
-            if (Data.FindUserByName(command[1])->IsPassCorrect(command[2]))
-            {
-                Send(client_fd, "SIGNIN_OK");
-                Log.Signin(command[1], true);
-            }
+
+            Send(client_fd, "SIGNIN_OK");
+            Log.Signin(command[1], true);
 
             currUser = Data.FindUserByName(command[1]);
-
         }
         else
         {
@@ -221,19 +218,19 @@ void Server::CommandHandler(string command_line, int client_fd)
             Send(client_fd, "SIGNIN_NOT_OK");
         }
     }
-
     else if (command[0] == "exit")
     {
         Send(client_fd, "EXIT_OK");
     }
-    else if (command[0] == "1")
+    
+    else if (command[0] == VIEW_USER_INFO)
     {
         string user = Recv(client_fd);
         User *user_ptr = Data.FindUserByName(user);
         Send(client_fd, user_ptr->GerUserInfo());
         Log.ViewUserInfo(user);
     }
-    else if (command[0] == "2")
+    else if (command[0] == VIEW_ALL_USER)
     {
         string user = Recv(client_fd);
 
@@ -257,7 +254,7 @@ void Server::CommandHandler(string command_line, int client_fd)
         Send(client_fd, users_info);
         Log.ViewAllUser(user, true);
     }
-    else if (command[0] == "3"){
+    else if (command[0] == VIEW_ROOM_INFO){
         string user = Recv(client_fd);
         User *user_ptr = Data.FindUserByName(user);
         bool is_admin = user_ptr->is_admin();
@@ -269,21 +266,8 @@ void Server::CommandHandler(string command_line, int client_fd)
         Send(client_fd, rooms_info);
         Log.ViewRoomInfo(user);
     }
-    else if (command[0] == "9"){
-        string user = Recv(client_fd);
-        User *user_ptr = Data.FindUserByName(user);
-        if (!user_ptr->is_admin())
-        {
-            Send(client_fd, "NO");
-            Log.Rooms(user, false, "NO_ERROR");
-            return;
-        }
-        Send(client_fd, "YES" );
-        string recv_command = Recv(client_fd);
-        HandleRoomsCommand(user, recv_command, client_fd);
-    }
-
-    else if (command[0] == "4")
+    
+    else if (command[0] == BOOKING)
     {
         string bookCommand;
         string numOfRoom;
@@ -329,7 +313,7 @@ void Server::CommandHandler(string command_line, int client_fd)
             Send(client_fd, "Room Not Found!");
         }
     }
-    else if (command[0] == "5")
+    else if (command[0] == CANCELING)
     {
         Data.printUserReservations(currUser->GetId());
         string cancelCommand;
@@ -353,7 +337,7 @@ void Server::CommandHandler(string command_line, int client_fd)
             Send(client_fd, "There is no such a reservation");
         }
     }
-    else if (command[0] == "6")
+    else if (command[0] == PASS_DAY)
     {
         string passCommand;
         int value;
@@ -374,7 +358,7 @@ void Server::CommandHandler(string command_line, int client_fd)
             Send(client_fd, "Invalid Request");
         }
     }
-    else if (command[0] == "7")
+    else if (command[0] == EDIT_INFO )
     {
         string editCommand;
 
@@ -410,7 +394,7 @@ void Server::CommandHandler(string command_line, int client_fd)
             cout << "Succussfully edited" << endl;
         }
     }
-    else if (command[0] == "8")
+    else if (command[0] == LEAVING_ROOM)
     {
         string leaveCommand;
         string value;
@@ -433,7 +417,19 @@ void Server::CommandHandler(string command_line, int client_fd)
             Send(client_fd, "102 : Invalid Input");
         }
     }
-
+    else if (command[0] == ROOMS){
+        string user = Recv(client_fd);
+        User *user_ptr = Data.FindUserByName(user);
+        if (!user_ptr->is_admin())
+        {
+            Send(client_fd, "NO");
+            Log.Rooms(user, false, "NO_ERROR");
+            return;
+        }
+        Send(client_fd, "YES" );
+        string recv_command = Recv(client_fd);
+        HandleRoomsCommand(user, recv_command, client_fd);
+    }
     else if (command[0] == "10")
     {
     }

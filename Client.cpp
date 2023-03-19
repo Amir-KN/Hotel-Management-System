@@ -97,7 +97,7 @@ bool Client::CheckSign(vector<string> command, string recv_mess_from_ser, int se
     else
     {
         // Problem in CheckSign func.
-        cout << "Problem in CheckSign func." << endl;
+        cout << "    --> Problem in Connect to server, Try again ! <--" << endl;
     }
 
     return true;
@@ -117,11 +117,40 @@ string Client::GetCommand()
         if (commands.size() == 0 || (!((commands[0] == "signup") || (commands[0] == "signin") || (commands[0] == "exit"))))
         {
             PrintError("503");
+            cout << "Write Command :\n  --> signin <username> <password>\n  --> signup <username>\n  --> exit\n"
+                 << endl;
+            continue;
+        }
+
+        if (!CheckFirstCommand(command)){
+            PrintError("503");
+            cout << "Write Command :\n  --> signin <username> <password>\n  --> signup <username>\n  --> exit\n"
+                 << endl;
             continue;
         }
 
         return command;
     }
+}
+
+bool Client::CheckFirstCommand(string command){
+    vector<string> commands = BreakString(command);
+    if (commands[0] == "signup")
+    {
+        if(commands.size() != 2) return false;
+        return true;
+    }
+    else if (commands[0] == "signin")
+    {
+        if(commands.size() != 3) return false;
+        return true;
+    }
+    else if (commands[0] == "exit")
+    {
+        if (commands.size() != 1) return false;
+        return true;
+    }
+    return false;
 }
 
 string Client::Recv(int server_fd)
@@ -143,24 +172,28 @@ void Client::Menu(string user)
     while (true)
     {
         cout << endl
-             << "      ** Choose Option :  **" << endl
+             << "      ** Choose Number :  **" << endl
              << "1. View User Information" << endl
              << "2. View All User" << endl
              << "3. View Rooms Information" << endl
              << "9. Rooms" << endl
              << "0. Logout" << endl;
         cin >> command;
-        // if (commans is OK)
+        if ((!IsDigit(command)) || (command.length() != 1))
+        {
+            PrintError("503");
+            continue;
+        }
         Send(server_fd, command);
 
-        if (command == "1")
+        if (command == VIEW_USER_INFO)
         {
             
             Send(server_fd, user);
             string user_info = Recv(server_fd);
             cout << user_info << endl;
         }
-        else if (command == "2")
+        else if (command == VIEW_ALL_USER)
         {
             Send(server_fd, user);
 
@@ -176,7 +209,7 @@ void Client::Menu(string user)
             string user_information = Recv(server_fd) ;
             cout << user_information << endl;
         }
-        else if (command == "3"){
+        else if (command == VIEW_ROOM_INFO){
             Send(server_fd, user);
             string rooms_info ;
             rooms_info = Recv(server_fd);
@@ -184,7 +217,7 @@ void Client::Menu(string user)
             
 
         }
-        else if (command == "9") {
+        else if (command == ROOMS) {
             Send(server_fd, user);
             string is_admin =  Recv(server_fd);
 
@@ -206,7 +239,7 @@ void Client::Menu(string user)
             PrintError(err_num);
             
         }
-        else if (command == "0")
+        else if (command == LOGOUT)
             break;
     }
 

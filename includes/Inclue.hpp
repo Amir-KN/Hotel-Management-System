@@ -21,5 +21,17 @@ using namespace std;
 using json = nlohmann::json;
 #define MAX_LEN_MESS 2048
 
+const string VIEW_USER_INFO = "1";
+const string VIEW_ALL_USER = "2";
+const string VIEW_ROOM_INFO = "3";
+const string BOOKING = "4";
+const string CANCELING = "5";
+const string PASS_DAY = "6";
+const string EDIT_INFO = "7";
+const string LEAVING_ROOM = "8";
+const string ROOMS = "9";
+const string LOGOUT = "0";
+
+
 
 #endif
