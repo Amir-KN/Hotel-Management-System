@@ -239,11 +239,12 @@ void Client::Menu(string user)
             PrintError(err_num);
             
         }
-        else if (command == LOGOUT)
+        else if (command == LOGOUT){
+            Send(server_fd, user);
+            PrintError("201");
             break;
+        }
     }
-
-    PrintError("201");
 }
 
 int main(int argc, char const *argv[])

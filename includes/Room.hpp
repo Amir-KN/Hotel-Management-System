@@ -16,6 +16,7 @@ public:
     int getId();
     int getNumOfBeds();
     void cancelRes(int num);
+    json GetUserJson();
 
 private:
     int id;
@@ -35,6 +36,8 @@ public:
     string getNum();
 
     int getCapacity();
+
+    int GetStatus();
 
     int GetMaxCapacity();
 
@@ -59,6 +62,8 @@ public:
     void ModifyRoom(int new_max_c, int new_price);
 
     void CheckStatus();
+
+    json GetUsersJson();
 
 private:
     string number;

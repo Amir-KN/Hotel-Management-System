@@ -60,6 +60,7 @@ void Server::Run()
             }
         }
     }
+    Data.UpdateData();
 }
 
 bool Server::SetupServer()
@@ -430,8 +431,10 @@ void Server::CommandHandler(string command_line, int client_fd)
         string recv_command = Recv(client_fd);
         HandleRoomsCommand(user, recv_command, client_fd);
     }
-    else if (command[0] == "10")
+    else if (command[0] == LOGOUT)
     {
+        string user = Recv(client_fd);
+        cout << "    --> User <" << user <<"> successfully signed up. <--" << endl;
     }
 }
 

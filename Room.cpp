@@ -157,6 +157,30 @@ bool Room::cancelReservation(int id, int num)
     return false; // Amir added this line
 }
 
+int Room::GetStatus(){ return status; }
+
+json ResUserInfo::GetUserJson(){
+        json j = {
+            {"id", id},
+            {"numOfBeds", num_of_beds},
+            {"reserveDate", res_date.GetStr("")},
+            {"checkoutDate", checkout_date.GetStr("")}
+            };
+        return j;
+}
+
+json Room::GetUsersJson(){
+    vector<json> user_in_room;
+    for (int i = 0 ; i < users.size() ; i++) {
+        json u = users[i]->GetUserJson();
+        user_in_room.push_back(u);
+    }
+    json all_user = 
+        {"users", user_in_room}
+        ;
+    return all_user;
+}
+
 bool Room::leaveRoom(int uId)
 {
     for (int i = 0; i < users.size(); i++)
@@ -171,8 +195,10 @@ bool Room::leaveRoom(int uId)
     return false;
 }
 
-
-vector<ResUserInfo *> Room::get_users() { return users; }
+vector<ResUserInfo *> Room::get_users()
+{
+    return users;
+}
 
 void Room::ModifyRoom(int new_max_c, int new_price){
     maxCapacity = new_max_c;

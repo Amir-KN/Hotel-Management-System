@@ -159,3 +159,58 @@ void JsonHandler::AddNewRoom(Room* new_room){
     all_room.push_back(new_room);
 }
 
+json JsonHandler::GetRoomsJson(){
+    string num;
+    int status, price, max_cap, cap;
+    vector<json> rooms;
+    for (int i = 0; i < all_room.size(); i++)
+    {
+        num = all_room[i]->getNum();
+        status = all_room[i]->GetStatus();
+        price = all_room[i]->getPrice();
+        max_cap = all_room[i]->GetMaxCapacity();
+        cap = all_room[i]->getCapacity();
+        json j = {
+            {"status", status},
+            {"price", price},
+            {"maxCapacity", max_cap},
+            {"capacity", cap},
+            {"number", num},
+            all_room[i]->GetUsersJson()
+            };
+        rooms.push_back(j);
+    }
+    json rooms_json = {
+        {"rooms", rooms}
+        };
+
+    return rooms_json;
+}
+
+
+json JsonHandler::GetUsersJson(){
+    vector<json> users;
+    for (int i = 0; i < all_user.size(); i++)
+    {
+        json j = all_user[i]->GetUserJson();
+        users.push_back(j);
+    }
+
+    json users_json = {
+        {"users", users}
+        };
+
+    return users_json;
+}
+
+
+void JsonHandler::UpdateData(){
+    json rooms_json = GetRoomsJson();
+    json users_json = GetUsersJson();
+
+    ofstream Rooms("JsonFiles/RoomsInfo.json"), Users("JsonFiles/UsersInfo.json");
+
+    Rooms << rooms_json << endl;
+    Users << users_json << endl;
+
+}

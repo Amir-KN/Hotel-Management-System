@@ -32,6 +32,18 @@ void NormalUser::editInfo(string newPass, int newPurse, string newPhone, string 
 Admin::Admin(int _id, string _user, string _pass) : User(_id, _user, _pass){};
 
 
+json Admin::GetUserJson()
+{
+        json a = {
+            {"id", id},
+            {"user", user},
+            {"password", password},
+            {"admin", "true"}
+            };
+
+    return a;
+}
+
 int Admin::getPurse() { return -1; }
 
 void Admin::print_user()
@@ -96,3 +108,18 @@ void NormalUser::payback(float amount)
 bool NormalUser::is_admin() { return false; }
 
 int NormalUser::getPurse() { return stoi(purse); }
+
+json NormalUser::GetUserJson()
+{
+        json u = {
+            {"id", id},
+            {"user", user},
+            {"password", password},
+            {"admin", "false"},
+            {"purse", purse},
+            {"phoneNumber", phoneNumber},
+            {"address", address}
+            };
+
+    return u;
+}

@@ -35,6 +35,8 @@ public:
 
     void RemoveRoom(string num);
 
+    void UpdateData();
+
     vector<User *> get_users();
 
     vector<Room *> get_rooms();
@@ -45,6 +47,9 @@ private:
     json user_data;
     vector<Room *> all_room;
     vector<User *> all_user;
+
+    json GetRoomsJson();
+    json GetUsersJson();
 };
 
 #endif
