@@ -57,7 +57,7 @@ public:
     void payment(float amount);
     void payback(float amount);
 
-    void editInfo(string newPass, int newPurse, string newPhone, string newAddress);
+    void editInfo(string newPass, string newPhone, string newAddress);
 
     json GetUserJson() ;
 

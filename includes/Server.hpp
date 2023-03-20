@@ -47,6 +47,10 @@ private:
     void PrintError(string error_number) ;
 
     void HandleRoomsCommand(string user, string command,int client_fd);
+
+    bool CheckBookCommand(string book_command);
+
+    bool CheckCancelCommand(string cancel_command);
 };
 
 #endif

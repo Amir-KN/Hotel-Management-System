@@ -2,6 +2,9 @@
 #define _Logger_
 #include "Inclue.hpp"
 #include "Date.hpp"
+#include <ctime>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 const string FOLDER = "Logs/";
 
@@ -25,6 +28,8 @@ public:
 
 private:
     string GetPath(string user);
+    string GetTime();
+    string GetInitInfo(string user);
     Date date;
 };
 

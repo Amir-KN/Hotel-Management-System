@@ -29,7 +29,7 @@ public:
 
     void AddNewUser(NormalUser *new_user);
 
-    void printUserReservations(int uId);
+    string GetUserReservations(int uId);
 
     void checkCheckouts(Date sysDate);
 

@@ -130,6 +130,8 @@ void Room::reserve(int id, int numOfBeds, string resDate, string checkoutDate)
 {
     ResUserInfo *newRes = new ResUserInfo(id, numOfBeds, resDate, checkoutDate);
     users.push_back(newRes);
+    capacity -= numOfBeds;
+    CheckStatus();
 }
 
 bool Room::cancelReservation(int id, int num)
@@ -206,7 +208,7 @@ void Room::ModifyRoom(int new_max_c, int new_price){
 }
 
 void Room::CheckStatus(){
-    if (capacity == maxCapacity){
+    if (capacity == 0){
         status = 1;
     }
     else 

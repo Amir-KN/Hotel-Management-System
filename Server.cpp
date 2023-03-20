@@ -60,7 +60,7 @@ void Server::Run()
             }
         }
     }
-    Data.UpdateData();
+    // Data.UpdateData();
 }
 
 bool Server::SetupServer()
@@ -189,7 +189,7 @@ void Server::CommandHandler(string command_line, int client_fd)
     vector<string> command = BreakString(command_line);
     User *currUser;
 
-    if (command[0] == "signup")
+    if (command[0] == SIGNUP)
     {
         if (Data.IsUserExist(command[1]))
             Send(client_fd, "SIGNUP_NOT_OK");
@@ -202,7 +202,7 @@ void Server::CommandHandler(string command_line, int client_fd)
             Send(client_fd, error_num);
         }
     }
-    else if (command[0] == "signin")
+    else if (command[0] == SIGNIN)
     {
         cout << "comman1 : " << command[1] << endl;
         if ((Data.IsUserExist(command[1])) && (Data.FindUserByName(command[1])->IsPassCorrect(command[2])))
@@ -210,8 +210,6 @@ void Server::CommandHandler(string command_line, int client_fd)
 
             Send(client_fd, "SIGNIN_OK");
             Log.Signin(command[1], true);
-
-            currUser = Data.FindUserByName(command[1]);
         }
         else
         {
@@ -219,7 +217,7 @@ void Server::CommandHandler(string command_line, int client_fd)
             Send(client_fd, "SIGNIN_NOT_OK");
         }
     }
-    else if (command[0] == "exit")
+    else if (command[0] == EXIT)
     {
         Send(client_fd, "EXIT_OK");
     }
@@ -270,25 +268,30 @@ void Server::CommandHandler(string command_line, int client_fd)
     
     else if (command[0] == BOOKING)
     {
-        string bookCommand;
-        string numOfRoom;
-        int numOfBed;
-        string reserveDate;
-        string checkoutDate;
+        string user = Recv(client_fd);
+        currUser = Data.FindUserByName(user);
+        if (currUser->is_admin())
+        {
+            Send(client_fd, "YES");
+            // Log.ViewAllUser(user, false);
+            return;
+        }
+        Send(client_fd, "NO" );
+        string book_command = Recv(client_fd);
+        if(!CheckBookCommand(book_command)){
+            Send(client_fd, "503");
+            return;
+        }
 
-        cin >> bookCommand >> numOfRoom >> numOfBed >> reserveDate >> checkoutDate;
+        vector<string> book = BreakString(book_command);
+        int numOfBed = stoi(book[2]);
+        string numOfRoom = book[1], reserveDate = book[3], checkoutDate = book[4];
 
         Room *tempRoom = Data.FindRoom(numOfRoom);
         Date *reservationDate = new Date(reserveDate);
 
-        if (bookCommand != "book")
-        {
-            Send(client_fd, "Invalid Input");
-        }
-
         if (tempRoom != nullptr)
         {
-
             if (tempRoom->checkCapacity(*reservationDate) >= numOfBed)
             {
 
@@ -296,46 +299,50 @@ void Server::CommandHandler(string command_line, int client_fd)
                 {
                     tempRoom->reserve(currUser->GetId(), numOfBed, reserveDate, checkoutDate);
                     currUser->payment(numOfBed * tempRoom->getPrice());
-                    Send(client_fd, "Successfully reserved");
+                    Send(client_fd, "107");
                 }
                 else
-                {
-                    Send(client_fd, "Not enough balance!");
-                }
+                    Send(client_fd, "108");
             }
             else
-            {
-
-                Send(client_fd, "Not enough capacity!");
-            }
+                Send(client_fd, "109");
         }
         else
-        {
-            Send(client_fd, "Room Not Found!");
-        }
+            Send(client_fd, "101");
     }
     else if (command[0] == CANCELING)
     {
-        Data.printUserReservations(currUser->GetId());
-        string cancelCommand;
-        string roomNum;
-        int num;
-        cin >> cancelCommand >> roomNum >> num;
-        Room* tempRoom = Data.FindRoom(roomNum);
-
-        if (cancelCommand != "cancel")
+        string user = Recv(client_fd);
+        currUser = Data.FindUserByName(user);
+        if (currUser->is_admin())
         {
-            Send(client_fd, "Invalid Input");
+            Send(client_fd, "YES");
+            // Log.ViewAllUser(user, false);
+            return;
         }
-
-        if (tempRoom->cancelReservation(currUser->GetId(), num))
+        Send(client_fd, "NO");
+        Recv(client_fd);
+        string res_info = Data.GetUserReservations(currUser->GetId());
+        Send(client_fd, res_info);
+        
+        string cancel_command = Recv(client_fd);
+        if(!CheckCancelCommand(cancel_command)){
+            Send(client_fd, "401");
+            return;
+        }
+        vector<string> cancel = BreakString(cancel_command);
+        Room* tempRoom = Data.FindRoom(cancel[1]);
+        if (tempRoom == NULL) {
+            Send(client_fd, "101");
+        }
+        else if (tempRoom->cancelReservation(currUser->GetId(), stoi(cancel[2])))
         {
-            currUser->payback((num * tempRoom->getPrice()) / 2);
-            Send(client_fd, "Successfully Canceled");
+            currUser->payback((stoi(cancel[2]) * tempRoom->getPrice()) / 2);
+            Send(client_fd, "110");
         }
         else
         {
-            Send(client_fd, "There is no such a reservation");
+            Send(client_fd, "102");
         }
     }
     else if (command[0] == PASS_DAY)
@@ -361,38 +368,24 @@ void Server::CommandHandler(string command_line, int client_fd)
     }
     else if (command[0] == EDIT_INFO )
     {
-        string editCommand;
+        string user = Recv(client_fd);
+        currUser = Data.FindUserByName(user);
+        string new_pass;
 
         if (currUser->is_admin())
         {
-            string newPass;
-            cout << "<new password>";
-            cin >> newPass;
-            currUser->editInfo(newPass);
-
-            cout << "Succussfully edited" << endl;
+            Send(client_fd, "YES");
+            new_pass = Recv(client_fd);
+            currUser->editInfo(new_pass);
+            Send(client_fd, "312");
         }
         else
         {
-            string newPass;
-            string newPhone;
-            string newAddress;
-            int newPurse;
-
-            cout << "<new password>";
-            cin >> newPass;
-            cout << "<new phone>";
-            cin >> newPhone;
-            cout << "<new address>";
-            cin >> newAddress;
-            cout << "<new purse>";
-            cin >> newPurse;
-
-            //currUser->editInfo(newPass, newPurse, newPhone, newAddress);
-            dynamic_cast<NormalUser*> (currUser)->editInfo(newPass, newPurse, newPhone, newAddress);
-
-
-            cout << "Succussfully edited" << endl;
+            Send(client_fd, "NO");
+            string info = Recv(client_fd);
+            vector<string> new_info = BreakString(info);
+            dynamic_cast<NormalUser*> (currUser)->editInfo(new_info[0], new_info[1], new_info[2]);
+            Send(client_fd, "312");
         }
     }
     else if (command[0] == LEAVING_ROOM)
@@ -434,8 +427,26 @@ void Server::CommandHandler(string command_line, int client_fd)
     else if (command[0] == LOGOUT)
     {
         string user = Recv(client_fd);
-        cout << "    --> User <" << user <<"> successfully signed up. <--" << endl;
+        cout << "    --> User <" << user <<"> successfully Loged out. <--" << endl;
+        Log.Logout(user);
     }
+}
+
+bool Server::CheckCancelCommand(string cancel_command){
+    vector<string> cancel = BreakString(cancel_command);
+    if (cancel.size() != 3) return false;
+    if ( (!IsDigit(cancel[1])) || (!IsDigit(cancel[2])) ) return false;
+    if(cancel[0] != "cancel") return false;
+    return true;
+}
+
+bool Server::CheckBookCommand(string book_command){
+    vector<string> book = BreakString(book_command);
+    if (book.size() != 5) return false;
+    if ( (!CheckDate(book[3])) || (!CheckDate(book[4]))) return false;
+    if ( (!IsDigit(book[1])) || (!IsDigit(book[2])) ) return false;
+    if(book[0] != "book") return false;
+    return true;
 }
 
 void Server::HandleRoomsCommand(string user, string command, int client_fd){

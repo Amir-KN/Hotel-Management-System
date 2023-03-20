@@ -173,11 +173,17 @@ void Client::Menu(string user)
     {
         cout << endl
              << "      ** Choose Number :  **" << endl
-             << "1. View User Information" << endl
-             << "2. View All User" << endl
-             << "3. View Rooms Information" << endl
-             << "9. Rooms" << endl
-             << "0. Logout" << endl;
+             << "> 1. View User Information" << endl
+             << "> 2. View All User" << endl
+             << "> 3. View Rooms Information" << endl
+             << "> 4. Booking" << endl
+             << "> 5. Cancelling" << endl
+             << "> 6. Pass Day" << endl
+             << "> 7. Edit Information" << endl
+             << "> 8. Leaving Room" << endl
+             << "> 9. Rooms" << endl
+             << "> 0. Logout" << endl
+             << "--> " ;
         cin >> command;
         if ((!IsDigit(command)) || (command.length() != 1))
         {
@@ -197,7 +203,6 @@ void Client::Menu(string user)
         {
             Send(server_fd, user);
 
-
             string is_admin =  Recv(server_fd);
 
             if (is_admin == "NO")
@@ -214,8 +219,73 @@ void Client::Menu(string user)
             string rooms_info ;
             rooms_info = Recv(server_fd);
             cout << rooms_info << endl ;
-            
+        }
+        else if (command == BOOKING){
+            Send(server_fd, user);
+            string is_admin =  Recv(server_fd);
 
+            if (is_admin == "YES")
+            {
+                PrintError("403");
+                continue;;
+            }
+            cout << "Write Command :" << endl 
+                << "    book <RoomNuum> <NumOfBeds> <CheckInDate> <CheckOutDate>" << endl 
+                <<"--> " ;
+            string command;getline(cin, command);
+            getline(cin, command);
+            Send(server_fd, command);
+
+            string err_num = Recv(server_fd);
+            PrintError(err_num);
+        }
+        else if(command == CANCELING){
+            Send(server_fd, user);
+            string is_admin =  Recv(server_fd);
+
+            if (is_admin == "YES")
+            {
+                PrintError("403");
+                continue;;
+            }
+            Send(server_fd, "TEMP");
+            string res_info = Recv(server_fd);
+            cout << res_info << endl;
+            
+            cout << "Write Command :" << endl 
+                << "    cancel <RoomNuum> <Num>" << endl 
+                <<"--> " ;
+            string command;getline(cin, command);
+            getline(cin, command);
+            Send(server_fd, command);
+            string err_num = Recv(server_fd);
+            PrintError(err_num);
+        }
+        else if(command == EDIT_INFO){
+            Send(server_fd, user);
+            string is_admin =  Recv(server_fd);
+            string new_info, err_num, temp;
+            if (is_admin == "YES")
+            {
+                cout << "Enter Your New Password -->  " ;
+                cin >> new_info;
+                Send(server_fd, new_info);
+            }
+            else
+            {
+                cout << "Enter Your New Password -->  ";
+                cin >> temp;
+                new_info = temp + " ";
+                cout << "Enter Your New Phone -->  ";
+                cin >> temp;
+                new_info += temp + " ";
+                cout << "Enter Your New Address -->  ";
+                cin >> temp;
+                new_info += temp;
+                Send(server_fd, new_info);
+            }
+            err_num = Recv(server_fd);
+            PrintError(err_num);
         }
         else if (command == ROOMS) {
             Send(server_fd, user);
@@ -237,7 +307,6 @@ void Client::Menu(string user)
 
             string err_num = Recv(server_fd);
             PrintError(err_num);
-            
         }
         else if (command == LOGOUT){
             Send(server_fd, user);

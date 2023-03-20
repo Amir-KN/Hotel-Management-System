@@ -21,10 +21,9 @@ void User::editInfo(string newPassword)
     password = newPassword;
 }
 
-void NormalUser::editInfo(string newPass, int newPurse, string newPhone, string newAddress)
+void NormalUser::editInfo(string newPass, string newPhone, string newAddress)
 {
     password = newPass;
-    purse = newPurse;
     phoneNumber = newPhone;
     address = newAddress;
 }

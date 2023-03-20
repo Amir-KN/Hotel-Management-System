@@ -21,6 +21,11 @@ using namespace std;
 using json = nlohmann::json;
 #define MAX_LEN_MESS 2048
 
+
+const string SIGNIN = "signin";
+const string SIGNUP = "signup";
+const string EXIT = "exit";
+
 const string VIEW_USER_INFO = "1";
 const string VIEW_ALL_USER = "2";
 const string VIEW_ROOM_INFO = "3";

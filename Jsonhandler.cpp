@@ -118,16 +118,21 @@ int JsonHandler::GetNewId()
     return all_user[last_index]->GetId() + 1;
 }
 
-void JsonHandler::printUserReservations(int uId)
+string JsonHandler::GetUserReservations(int uId)
 {
+    string res = "";
     for (Room *room : all_room)
     {
         for (ResUserInfo *rui : room->get_users())
         {
-            if (rui->getId() == uId)
-                rui->PrintResInfo();
+            if (rui->getId() == uId){
+                res += "Room Number : " + room->getNum() + "\n"; 
+                res += rui->GetUserInfo();
+            }
         }
     }
+    if (res == "") return "There Are No Reservation for This Users";
+    return res;
 }
 
 void JsonHandler::checkCheckouts(Date sysDate)
