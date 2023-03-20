@@ -17,26 +17,6 @@ We have some main Class :
   - `Date` : Handle the time of system.
   - `Logger` : This class logs action of all users. All logs store in *Logs* folder.
 
-## Menu of Users
-Each user can choose below options :
-  - `View User Information`
-  - `View All Users`
-  - `View Rooms Informations`
-  - `Booking`
-  - `Canceling`
-  - `Pass Day`
-  - `Edit Information`
-  - `Leaving Room`
-  - `Rooms`
-  - `Logout`
- 
- We handle each option with function. Usually at first we call `User->IsAdmin()` method to understand that this user(client) is admin or no ?
-
-
-
-
-
-
 
 ## Run The Project
 You can run the projet by below steps :
@@ -51,4 +31,74 @@ $ ./s.out
 
 ```
 $ ./c.out
+```
+
+## Menu of Users
+Each user can choose below options :
+  - [View User Information](#View-User-Information)
+  - [`View All Users`](#View-All-Users)
+  - [`View Rooms Informations`](#View-Rooms-Informations)
+  - [`Booking`](#Booking)
+  - [`Canceling`](#Canceling)
+  - [`Pass Day`](#Pass-Day)
+  - [`Edit Information`](#Edit-Information)
+  - [`Leaving Room`](#Leaving-Room)
+  - [`Rooms`](#Room)
+  - [`Logout`](#Logout)
+ 
+ We handle each option with function. Usually at first we call `User->IsAdmin()` method to understand that this user(client) is admin or no and after that 
+ we implement action that must be done.
+
+### View User Information
+We handle this option with below function in Server :
+```c++
+ void Server::HandleViewUserInfo(int client_fd);
+```
+
+### View All Users
+We handle this option with below function in Server :
+```c++
+ void Server::HandleViewUserInfo(int client_fd);
+```
+
+### View Rooms Informations
+We handle this option with below function in Server :
+```c++
+ void Server::HandleViewUserInfo(int client_fd);
+```
+
+### Booking
+We handle this option with below function in Server :
+```c++
+ void Server::HandleViewUserInfo(int client_fd);
+```
+
+### Canceling
+We handle this option with below function in Server :
+```c++
+ void Server::HandleViewUserInfo(int client_fd);
+```
+
+### Pass Day
+We handle this option with below function in Server :
+```c++
+ void Server::HandleViewUserInfo(int client_fd);
+```
+
+### Edit Information
+We handle this option with below function in Server :
+```c++
+ void Server::HandleViewUserInfo(int client_fd);
+```
+
+### Rooms
+We handle this option with below function in Server :
+```c++
+ void Server::HandleViewUserInfo(int client_fd);
+```
+
+### Logout
+We handle this option with below function in Server :
+```c++
+ void Server::HandleViewUserInfo(int client_fd);
 ```
