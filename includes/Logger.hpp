@@ -18,10 +18,10 @@ public:
     void ViewUserInfo(string user);
     void ViewAllUser(string user, bool is_admin);
     void ViewRoomInfo(string user);
-    void Book(string user);
-    void Cancel(string user);
-    void PassDay(string user);
-    void EditInfo(string user);
+    void Book(string user, bool is_admin, string error_num, string room_num = "");
+    void Cancel(string user, bool is_admin, string error_num, string room_num = "");
+    void PassDay(string user, bool is_admin, string value);
+    void EditInfo(string user, bool is_admin, vector<string> new_info);
     void LeavRoom(string user);
     void Rooms(string user, bool is_admin, string error_num, string room_num = "");
     void Logout(string user);
