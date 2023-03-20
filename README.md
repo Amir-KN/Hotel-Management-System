@@ -15,9 +15,22 @@ We have some main Class :
   - `Room` : This class store the information of rooms like *number of room* and *capacity* and ...
   - `Jsonhandler` : With help of this class we can read and modify the information of users and rooms from json files.
   - `Date` : Handle the time of system.
+  - `Logger` : This class logs action of all users. All logs store in *Logs* folder.
 
-
-
+## Menu of Users
+Each user can choose below options :
+  - `View User Information`
+  - `View All Users`
+  - `View Rooms Informations`
+  - `Booking`
+  - `Canceling`
+  - `Pass Day`
+  - `Edit Information`
+  - `Leaving Room`
+  - `Rooms`
+  - `Logout`
+ 
+ We handle each option with function. Usually at first we call `User->IsAdmin()` method to understand that this user(client) is admin or no ?
 
 
 

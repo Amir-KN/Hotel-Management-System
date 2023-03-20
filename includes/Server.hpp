@@ -51,6 +51,16 @@ private:
     bool CheckBookCommand(string book_command);
 
     bool CheckCancelCommand(string cancel_command);
+
+    void HandleViewUserInfo(int client_fd);
+    void HandleViewAllUser(int client_fd);    
+    void HandleViewRoomInfo(int client_fd);
+    void HandleBooking(int client_fd);
+    void HandleCanceling(int client_fd);
+    void HandlePassDay(int client_fd);    
+    void HandleEditInfo(int client_fd);
+    void HandleRooms(int client_fd);
+    void HandleExit(int client_fd);
 };
 
 #endif
