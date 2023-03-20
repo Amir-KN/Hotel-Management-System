@@ -30,15 +30,13 @@ void NormalUser::editInfo(string newPass, string newPhone, string newAddress)
 
 Admin::Admin(int _id, string _user, string _pass) : User(_id, _user, _pass){};
 
-
 json Admin::GetUserJson()
 {
-        json a = {
-            {"id", id},
-            {"user", user},
-            {"password", password},
-            {"admin", "true"}
-            };
+    json a = {
+        {"id", id},
+        {"user", user},
+        {"password", password},
+        {"admin", "true"}};
 
     return a;
 }
@@ -110,15 +108,14 @@ int NormalUser::getPurse() { return stoi(purse); }
 
 json NormalUser::GetUserJson()
 {
-        json u = {
-            {"id", id},
-            {"user", user},
-            {"password", password},
-            {"admin", "false"},
-            {"purse", purse},
-            {"phoneNumber", phoneNumber},
-            {"address", address}
-            };
+    json u = {
+        {"id", id},
+        {"user", user},
+        {"password", password},
+        {"admin", "false"},
+        {"purse", purse},
+        {"phoneNumber", phoneNumber},
+        {"address", address}};
 
     return u;
 }

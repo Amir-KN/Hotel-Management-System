@@ -1,6 +1,6 @@
 #include "includes/Function.hpp"
 
-vector<string> BreakString(string str, char sep )
+vector<string> BreakString(string str, char sep)
 {
     istringstream ss(str);
     string word;
@@ -20,4 +20,3 @@ bool IsDigit(string str)
     }
     return true;
 }
-

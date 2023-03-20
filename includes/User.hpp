@@ -2,7 +2,6 @@
 #define _User_
 #include "Inclue.hpp"
 
-
 class User
 {
 public:
@@ -34,7 +33,7 @@ public:
     void print_user();
 
     string GerUserInfo();
-    json GetUserJson() ;
+    json GetUserJson();
     bool is_admin();
     void payment(float amount);
     void payback(float amount);
@@ -59,13 +58,12 @@ public:
 
     void editInfo(string newPass, string newPhone, string newAddress);
 
-    json GetUserJson() ;
+    json GetUserJson();
 
 private:
     string purse;
     string phoneNumber;
     string address;
 };
-
 
 #endif

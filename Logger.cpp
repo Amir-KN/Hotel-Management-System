@@ -132,7 +132,7 @@ void Logger::EditInfo(string user, bool is_admin, vector<string> new_info)
     {
         log << GetInitInfo(user) << "This User Changed Her/His Information." << endl
             << "    New Passwod : " << new_info[0] << endl
-            << "    New Phone : " << new_info[1] << endl 
+            << "    New Phone : " << new_info[1] << endl
             << "    New Address : " << new_info[2] << endl;
     }
 }

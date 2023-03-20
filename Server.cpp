@@ -64,7 +64,7 @@ void Server::Run()
             }
         }
     }
-    // Data.UpdateData();
+    Data.UpdateData();
 }
 
 bool Server::SetupServer()
@@ -453,25 +453,25 @@ void Server::CommandHandler(string command_line, int client_fd)
 
     else if (command[0] == VIEW_USER_INFO)
         HandleViewUserInfo(client_fd);
-    
+
     else if (command[0] == VIEW_ALL_USER)
         HandleViewAllUser(client_fd);
-    
+
     else if (command[0] == VIEW_ROOM_INFO)
         HandleViewRoomInfo(client_fd);
-    
+
     else if (command[0] == BOOKING)
         HandleBooking(client_fd);
-    
+
     else if (command[0] == CANCELING)
         HandleCanceling(client_fd);
-    
+
     else if (command[0] == PASS_DAY)
         HandlePassDay(client_fd);
-    
+
     else if (command[0] == EDIT_INFO)
         HandleEditInfo(client_fd);
-    
+
     else if (command[0] == LEAVING_ROOM)
     {
         string leaveCommand;
@@ -495,10 +495,10 @@ void Server::CommandHandler(string command_line, int client_fd)
             Send(client_fd, "102 : Invalid Input");
         }
     }
-    
+
     else if (command[0] == ROOMS)
         HandleRooms(client_fd);
-    
+
     else if (command[0] == LOGOUT)
         HandleExit(client_fd);
 }

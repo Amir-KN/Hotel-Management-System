@@ -2,7 +2,7 @@
 
 ## Architecture
 We use **socket.h** library for create a *client server* connection. We use `select()` systemcall to handle requests from multiple clients without blocking the server process.\
-The `port` for *server* & *client* and `ip` for *client* read from `config.json` file. Also the list of Users and Rooms and their details read from `UsersInfo.json` & `RoomsInfo.json` files and store in server([Describe in Structure part](#Structure)). We create an `Errors.json` file to write all errors and message thar show in client.
+The `port` for *server* & *client* and `ip` for *client* read from `config.json` file. Also the list of Users and Rooms and their details read from `UsersInfo.json` & `RoomsInfo.json` files and store in server([Describe in Structure part](#Structure)). We create an `Errors.json` file to write all errors and message that show in client.
 
 ## Structure
 We have some main Class :
@@ -24,7 +24,7 @@ You can run the projet by below steps :
 ```
 $ make
 ```
-- After that you should run the `server` and `client` in diffrent terminal page :
+- After that you should run the **Server** as `s.out` and **Client** as `c.out` in diffrent terminal page :
 ```
 $ ./s.out
 ```
@@ -35,7 +35,7 @@ $ ./c.out
 
 ## Menu of Users
 Each user can choose below options :
-  - [View User Information](#View-User-Information)
+  - [`View User Information`](#View-User-Information)
   - [`View All Users`](#View-All-Users)
   - [`View Rooms Informations`](#View-Rooms-Informations)
   - [`Booking`](#Booking)
@@ -52,53 +52,68 @@ Each user can choose below options :
 ### View User Information
 We handle this option with below function in Server :
 ```c++
- void Server::HandleViewUserInfo(int client_fd);
+void Server::HandleViewUserInfo(int client_fd);
 ```
+This option print the user information without password.
 
 ### View All Users
 We handle this option with below function in Server :
 ```c++
- void Server::HandleViewUserInfo(int client_fd);
+void Server::HandleViewAllUser(int client_fd);
 ```
+Only admins can use this option. By select this option, admin see the information of all users. 
 
 ### View Rooms Informations
 We handle this option with below function in Server :
 ```c++
- void Server::HandleViewUserInfo(int client_fd);
+void Server::HandleViewRoomInfo(int client_fd);
 ```
+This option print the information of each room. All users can use this option.
 
 ### Booking
 We handle this option with below function in Server :
 ```c++
- void Server::HandleViewUserInfo(int client_fd);
+void Server::HandleBooking(int client_fd);
 ```
+Only normal users can use this option. With help of this option normal users can book a room if the room has enough beds.
 
 ### Canceling
 We handle this option with below function in Server :
 ```c++
- void Server::HandleViewUserInfo(int client_fd);
+void Server::HandleCanceling(int client_fd);
 ```
+Normal user can cancel their reservations. At first we print all reserve of user and the he/she can cancell each reservation.
 
 ### Pass Day
 We handle this option with below function in Server :
 ```c++
- void Server::HandleViewUserInfo(int client_fd);
+void Server::HandlePassDay(int client_fd);
 ```
+Only admins can use this option. With help of this option we can pass day and update the date of system.
 
 ### Edit Information
 We handle this option with below function in Server :
 ```c++
- void Server::HandleViewUserInfo(int client_fd);
+void Server::HandleEditInfo(int client_fd);
 ```
+Both admins and normal users can edit information with help of this option.
+Admins can change the password and normal user can change password, phone and address.
+
+### Leaving Room
+
 
 ### Rooms
 We handle this option with below function in Server :
 ```c++
- void Server::HandleViewUserInfo(int client_fd);
+void Server::HandleRooms(int client_fd);
 ```
+With help of this option, admins can ADD, REMOVE and MODIFY the rooms.
 
 ### Logout
 We handle this option with below function in Server :
 ```c++
- void Server::HandleViewUserInfo(int client_fd);
+void Server::HandleExit(int client_fd);
 ```
+If a user select this option, he/she logout from account and the client close.
+
+When we close the server, json files update with `Data.UpdateData();`.

@@ -24,7 +24,7 @@ void Client::Run()
         command = GetCommand();
         send(server_fd, command.c_str(), strlen(command.c_str()), 0);
         string recv_mess = Recv(server_fd);
-        is_sign_ok = CheckSign(BreakString(command),recv_mess, server_fd);
+        is_sign_ok = CheckSign(BreakString(command), recv_mess, server_fd);
         if (!is_sign_ok)
             break;
     }
@@ -122,7 +122,8 @@ string Client::GetCommand()
             continue;
         }
 
-        if (!CheckFirstCommand(command)){
+        if (!CheckFirstCommand(command))
+        {
             PrintError("503");
             cout << "Write Command :\n  --> signin <username> <password>\n  --> signup <username>\n  --> exit\n"
                  << endl;
@@ -133,21 +134,25 @@ string Client::GetCommand()
     }
 }
 
-bool Client::CheckFirstCommand(string command){
+bool Client::CheckFirstCommand(string command)
+{
     vector<string> commands = BreakString(command);
     if (commands[0] == "signup")
     {
-        if(commands.size() != 2) return false;
+        if (commands.size() != 2)
+            return false;
         return true;
     }
     else if (commands[0] == "signin")
     {
-        if(commands.size() != 3) return false;
+        if (commands.size() != 3)
+            return false;
         return true;
     }
     else if (commands[0] == "exit")
     {
-        if (commands.size() != 1) return false;
+        if (commands.size() != 1)
+            return false;
         return true;
     }
     return false;
@@ -183,7 +188,7 @@ void Client::Menu(string user)
              << "> 8. Leaving Room" << endl
              << "> 9. Rooms" << endl
              << "> 0. Logout" << endl
-             << "--> " ;
+             << "--> ";
         cin >> command;
         if ((!IsDigit(command)) || (command.length() != 1))
         {
@@ -260,7 +265,8 @@ void Client::Menu(string user)
             cout << "Write Command :" << endl
                  << "    cancel <RoomNuum> <Num>" << endl
                  << "--> ";
-            string command;getline(cin, command);
+            string command;
+            getline(cin, command);
             getline(cin, command);
             Send(server_fd, command);
             string err_num = Recv(server_fd);
@@ -280,7 +286,8 @@ void Client::Menu(string user)
             cout << "Write Command :" << endl
                  << "    passDay <value>" << endl
                  << "--> ";
-            string command;getline(cin, command);
+            string command;
+            getline(cin, command);
             getline(cin, command);
             Send(server_fd, command);
 

@@ -34,5 +34,4 @@ private:
     bool CheckFirstCommand(string command);
 };
 
-
 #endif

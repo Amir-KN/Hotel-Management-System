@@ -125,13 +125,15 @@ string JsonHandler::GetUserReservations(int uId)
     {
         for (ResUserInfo *rui : room->get_users())
         {
-            if (rui->getId() == uId){
-                res += "Room Number : " + room->getNum() + "\n"; 
+            if (rui->getId() == uId)
+            {
+                res += "Room Number : " + room->getNum() + "\n";
                 res += rui->GetUserInfo();
             }
         }
     }
-    if (res == "") return "There Are No Reservation for This Users";
+    if (res == "")
+        return "There Are No Reservation for This Users";
     return res;
 }
 
@@ -160,11 +162,13 @@ void JsonHandler::RemoveRoom(string num)
     }
 }
 
-void JsonHandler::AddNewRoom(Room* new_room){
+void JsonHandler::AddNewRoom(Room *new_room)
+{
     all_room.push_back(new_room);
 }
 
-json JsonHandler::GetRoomsJson(){
+json JsonHandler::GetRoomsJson()
+{
     string num;
     int status, price, max_cap, cap;
     vector<json> rooms;
@@ -181,19 +185,17 @@ json JsonHandler::GetRoomsJson(){
             {"maxCapacity", max_cap},
             {"capacity", cap},
             {"number", num},
-            all_room[i]->GetUsersJson()
-            };
+            all_room[i]->GetUsersJson()};
         rooms.push_back(j);
     }
     json rooms_json = {
-        {"rooms", rooms}
-        };
+        {"rooms", rooms}};
 
     return rooms_json;
 }
 
-
-json JsonHandler::GetUsersJson(){
+json JsonHandler::GetUsersJson()
+{
     vector<json> users;
     for (int i = 0; i < all_user.size(); i++)
     {
@@ -202,14 +204,13 @@ json JsonHandler::GetUsersJson(){
     }
 
     json users_json = {
-        {"users", users}
-        };
+        {"users", users}};
 
     return users_json;
 }
 
-
-void JsonHandler::UpdateData(){
+void JsonHandler::UpdateData()
+{
     json rooms_json = GetRoomsJson();
     json users_json = GetUsersJson();
 
@@ -217,5 +218,4 @@ void JsonHandler::UpdateData(){
 
     Rooms << rooms_json << endl;
     Users << users_json << endl;
-
 }

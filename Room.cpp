@@ -1,6 +1,5 @@
 #include "includes/Room.hpp"
 
-
 ResUserInfo::ResUserInfo(int _id, int _num_of_beds, string _res_date, string _checkout_date)
 {
     id = _id;
@@ -19,7 +18,8 @@ void ResUserInfo::PrintResInfo()
     checkout_date.PrintDay();
 }
 
-string ResUserInfo::GetUserInfo(){
+string ResUserInfo::GetUserInfo()
+{
     string user_info;
     user_info = "   User Id : " + to_string(id) + "\n   Num of Beds : " + to_string(num_of_beds) + "\n   Reserve Date : " + res_date.GetStr() +
                 "   Checkout Date : " + checkout_date.GetStr() + "  ---------------------------\n";
@@ -39,7 +39,6 @@ void ResUserInfo::cancelRes(int num)
 int ResUserInfo::getId() { return id; }
 
 int ResUserInfo::getNumOfBeds() { return num_of_beds; }
-
 
 Room::Room(string _number, int _status, int _price, int _maxCapacity, int _capacity, vector<ResUserInfo *> _users)
 {
@@ -64,24 +63,24 @@ void Room::print_room()
 string Room::GetUserInRoom()
 {
     string users_info;
-    users_info = "---> Users in Room :\n" ;
+    users_info = "---> Users in Room :\n";
     if (users.size() == 0)
         users_info += "   This Room Is Empty!\n";
     else
-        for(int i=0 ; i < users.size() ; i++){
+        for (int i = 0; i < users.size(); i++)
+        {
             users_info += users[i]->GetUserInfo();
         }
-        
+
     return users_info;
 }
 
 string Room::GetInfoRoom(bool is_admin)
-{ 
-    string room_info ;
-    room_info = "\n**************\nRoom Number : " + number + "\nStatus : " + to_string(status) + "\nPrice : " + to_string(price) + 
-                "\nMax Capacity : " + to_string(maxCapacity) + "\n" + GetUserInRoom() ;
+{
+    string room_info;
+    room_info = "\n**************\nRoom Number : " + number + "\nStatus : " + to_string(status) + "\nPrice : " + to_string(price) +
+                "\nMax Capacity : " + to_string(maxCapacity) + "\n" + GetUserInRoom();
     return room_info;
-
 }
 
 string Room::getNum()
@@ -94,7 +93,8 @@ int Room::getCapacity()
     return capacity;
 }
 
-int Room::GetMaxCapacity(){
+int Room::GetMaxCapacity()
+{
     return maxCapacity;
 }
 
@@ -159,27 +159,28 @@ bool Room::cancelReservation(int id, int num)
     return false; // Amir added this line
 }
 
-int Room::GetStatus(){ return status; }
+int Room::GetStatus() { return status; }
 
-json ResUserInfo::GetUserJson(){
-        json j = {
-            {"id", id},
-            {"numOfBeds", num_of_beds},
-            {"reserveDate", res_date.GetStr("")},
-            {"checkoutDate", checkout_date.GetStr("")}
-            };
-        return j;
+json ResUserInfo::GetUserJson()
+{
+    json j = {
+        {"id", id},
+        {"numOfBeds", num_of_beds},
+        {"reserveDate", res_date.GetStr("")},
+        {"checkoutDate", checkout_date.GetStr("")}};
+    return j;
 }
 
-json Room::GetUsersJson(){
+json Room::GetUsersJson()
+{
     vector<json> user_in_room;
-    for (int i = 0 ; i < users.size() ; i++) {
+    for (int i = 0; i < users.size(); i++)
+    {
         json u = users[i]->GetUserJson();
         user_in_room.push_back(u);
     }
-    json all_user = 
-        {"users", user_in_room}
-        ;
+    json all_user =
+        {"users", user_in_room};
     return all_user;
 }
 
@@ -202,16 +203,18 @@ vector<ResUserInfo *> Room::get_users()
     return users;
 }
 
-void Room::ModifyRoom(int new_max_c, int new_price){
+void Room::ModifyRoom(int new_max_c, int new_price)
+{
     maxCapacity = new_max_c;
     price = new_price;
 }
 
-void Room::CheckStatus(){
-    if (capacity == 0){
+void Room::CheckStatus()
+{
+    if (capacity == 0)
+    {
         status = 1;
     }
-    else 
+    else
         status = 0;
 }
-
