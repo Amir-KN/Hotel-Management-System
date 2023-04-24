@@ -108,6 +108,7 @@ We handle this option with below function in Server :
 void Server::HandleRooms(int client_fd);
 ```
 With help of this option, admins can ADD, REMOVE and MODIFY the rooms.
+The detail and argument of each feature write after choose Room option
 
 ### Logout
 We handle this option with below function in Server :
